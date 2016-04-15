@@ -5,7 +5,6 @@ import cn.cocho.dborm.test.utils.DBLogger;
 import cn.cocho.dborm.test.utils.DataBaseManager;
 import cn.cocho.dborm.test.utils.domain.UserInfo;
 import cn.cocho.dborm.utils.DbormContexts;
-import org.junit.AfterClass;
 import org.junit.Test;
 
 import java.util.Date;
@@ -15,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class InitTest {
 
     Dborm dborm;
+    UserInfo user;
 
     public InitTest() {
     }
@@ -24,7 +24,7 @@ public class InitTest {
         try {
             initDbormContexts();
             initDborm();
-            checkTableIsExists();
+            check();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,31 +41,19 @@ public class InitTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    private void checkTableIsExists() {
-        UserInfo user = new UserInfo();
-        user.setId("ID1234567");
-        user.setUserId("USID1");
-        user.setUserName("Tom");
+    private void check() {
+        user = new UserInfo();
+        user.setId("USID1");
+        user.setName("Tom");
         user.setAge(10);
-        user.setBirthday(new Date());
-        boolean ins = dborm.insert(user);
-        assertEquals(true, ins);
-        UserInfo user1 = dborm.getEntity(UserInfo.class, "select * from user_info");
-        boolean result = true;
-        if (user1 == null) {
-            result = false;
-        }
+        user.setCreateTime(new Date());
+        boolean result = dborm.insert(user);//添加一条数据测试一下数据库是否可用
         assertEquals(true, result);
-
+        result = dborm.delete(user);
+        assertEquals(true, result);
     }
 
-    @AfterClass
-    public static void deleteDb() {
-        boolean del = new Dborm(new DataBaseManager(), new DBLogger()).execSql("delete from user_info");
-        assertEquals(true, del);
-    }
 
 }

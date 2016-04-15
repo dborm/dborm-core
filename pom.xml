@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
 
-    <name>dborm-web Maven Webapp</name>
+    <name>dborm-core Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <dependencies>
 
@@ -43,7 +43,7 @@
 
 
     <build>
-        <finalName>dborm-web</finalName>
+        <finalName>dborm-core</finalName>
 
         <plugins>
             <!-- 拷贝依赖的jar包到lib目录 -->

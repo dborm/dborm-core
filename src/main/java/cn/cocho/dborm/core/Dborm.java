@@ -69,7 +69,8 @@ public class Dborm {
 
 
     /**
-     * 新增实体（自动添加事务）
+     * 新增实体
+     * 主键值不能为空
      *
      * @param entity 实体对象
      * @return true:执行成功 false:执行失败或空的参数
@@ -80,7 +81,9 @@ public class Dborm {
 
 
     /**
-     * 批量新增实体（自动添加事务）
+     * 批量新增实体
+     * 主键值不能为空
+     * 自动添加事务
      *
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
@@ -98,7 +101,12 @@ public class Dborm {
     }
 
     /**
-     * 替换实体(主键值不能为空，自动添加事务)
+     * 替换实体（修改所有的列）
+     * <p/>
+     * 主键值不能为空
+     * 属性值不为null,则修改该列
+     * 属性值为null,则修改为null
+     * 自动添加事务
      *
      * @param entity 实体对象
      * @return true:执行成功 false:执行失败或空的参数
@@ -108,7 +116,12 @@ public class Dborm {
     }
 
     /**
-     * 批量替换实体(主键值不能为空，自动添加事务)
+     * 批量替换实体（修改所有的列）
+     * <p/>
+     * 主键值不能为空
+     * 属性值不为null,则修改该列
+     * 属性值为null,则修改为null
+     * 自动添加事务
      *
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
@@ -126,35 +139,11 @@ public class Dborm {
     }
 
     /**
-     * 删除实体(主键值不能为空，自动添加事务)
-     *
-     * @param entity 实体对象
-     * @return true:执行成功 false:执行失败或空的参数
-     */
-    public <T> boolean delete(T entity) {
-        return delete(entityToEntityList(entity));
-    }
-
-    /**
-     * 批量删除实体(主键值不能为空，自动添加事务)
-     *
-     * @param entitys 实体对象集合
-     * @return true:执行成功 false:执行失败或空的参数
-     */
-    public <T> boolean delete(List<T> entitys) {
-        boolean result = false;
-        if (entitys != null && entitys.size() > 0) {
-            List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
-            for (T entity : entitys) {
-                pairList.addAll(sqlPairFactory.deleteDeep(entity));
-            }
-            result = execSqlByTransaction(pairList);
-        }
-        return result;
-    }
-
-    /**
-     * 修改实体（修改属性值不为null的属性，主键值不能为空，自动添加事务）
+     * 修改实体（仅修改属性值不为null的列）
+     * <p/>
+     * 主键值不能为空
+     * 属性值不为null,则修改该列
+     * 属性值为null,则忽略修改该列（修改后仍保持原来的值）
      *
      * @param entity 实体对象
      * @return true:执行成功 false:执行失败或空的参数
@@ -164,7 +153,12 @@ public class Dborm {
     }
 
     /**
-     * 批量修改实体（修改属性值不为null的属性，主键值不能为空，自动添加事务）
+     * 批量修改实体（仅修改属性值不为null的列）
+     * <p/>
+     * 主键值不能为空
+     * 属性值不为null,则修改该列
+     * 属性值为null,则忽略修改该列（修改后仍保持原来的值）
+     * 自动添加事务
      *
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
@@ -263,6 +257,34 @@ public class Dborm {
                     dataBase.closeConn(conn);
                 }
             }
+        }
+        return result;
+    }
+
+    /**
+     * 删除实体(主键值不能为空，自动添加事务)
+     *
+     * @param entity 实体对象
+     * @return true:执行成功 false:执行失败或空的参数
+     */
+    public <T> boolean delete(T entity) {
+        return delete(entityToEntityList(entity));
+    }
+
+    /**
+     * 批量删除实体(主键值不能为空，自动添加事务)
+     *
+     * @param entitys 实体对象集合
+     * @return true:执行成功 false:执行失败或空的参数
+     */
+    public <T> boolean delete(List<T> entitys) {
+        boolean result = false;
+        if (entitys != null && entitys.size() > 0) {
+            List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
+            for (T entity : entitys) {
+                pairList.addAll(sqlPairFactory.deleteDeep(entity));
+            }
+            result = execSqlByTransaction(pairList);
         }
         return result;
     }

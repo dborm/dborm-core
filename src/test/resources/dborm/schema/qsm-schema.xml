@@ -7,7 +7,7 @@
 		<column default_value="null" field_name="content" is_primary_key="false"/>
 		<column default_value="null" field_name="showOrder" is_primary_key="false"/>
 		<column default_value="null" field_name="attachmentCount" is_primary_key="false"/>
-		<column default_value="null" field_name="userId" is_primary_key="false"/>
+		<column default_value="null" field_name="id" is_primary_key="false"/>
 	</table>
 
 	<!-- 一个xml文件中可以同时描述多个Domain（多张表） -->
