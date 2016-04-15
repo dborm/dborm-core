@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+    
+	<table class_path="cn.cocho.dborm.test.utils.domain.QsmOption" tableName="qsm_option">
+		<column default_value="null" field_name="optionId" is_primary_key="true"/>
+		<column default_value="null" field_name="questionId" is_primary_key="false"/>
+		<column default_value="null" field_name="content" is_primary_key="false"/>
+		<column default_value="null" field_name="showOrder" is_primary_key="false"/>
+		<column default_value="null" field_name="attachmentCount" is_primary_key="false"/>
+		<column default_value="null" field_name="userId" is_primary_key="false"/>
+	</table>
+
+	<!-- 一个xml文件中可以同时描述多个Domain（多张表） -->
+    
+    
+    
+</tables>
