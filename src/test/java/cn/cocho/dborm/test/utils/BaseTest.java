@@ -33,11 +33,10 @@ public class BaseTest {
     }
 
     public static void cleanTable() {
-        Dborm dborm = new Dborm(new DataBaseManager(), new DBLogger());
-        boolean result = dborm.execSql("delete from user_info");
+        boolean result = getDborm().execSql("delete from user_info");
         assertEquals(true, result);
-        result = dborm.execSql("delete from book_info");
-        assertEquals(true, result);
+//        result = getDborm().execSql("delete from book_info");
+//        assertEquals(true, result);
     }
 
 

@@ -16,6 +16,7 @@ public class SigleEntityTest extends BaseTest {
 
     @BeforeClass
     public static void before() {
+        cleanTable();
         UserInfo user = getUserInfo();
         boolean result = getDborm().insert(user);
         assertEquals(true, result);

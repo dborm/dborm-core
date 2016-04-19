@@ -1,11 +1,15 @@
 package cn.cocho.dborm.core;
 
-import cn.cocho.dborm.utils.*;
+import cn.cocho.dborm.utils.DbormContexts;
+import cn.cocho.dborm.utils.LoggerUtilsDborm;
+import cn.cocho.dborm.utils.PairDborm;
+import cn.cocho.dborm.utils.StringUtilsDborm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,7 +57,7 @@ public class SQLExecutor {
      * @author COCHO
      * @time 2013-5-6上午10:41:26
      */
-    public void execSQLUseTransaction(List<PairDborm<String, List>> execSqlPairList, Connection conn) throws SQLException {
+    public void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Connection conn) throws SQLException {
         PreparedStatement pst = null;
         try {
             conn.setAutoCommit(false);

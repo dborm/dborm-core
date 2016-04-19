@@ -88,7 +88,7 @@ public class Dborm {
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean insert(List<T> entitys) {
+    public <T> boolean insert(Collection<T> entitys) {
         boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
@@ -126,7 +126,7 @@ public class Dborm {
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean replace(List<T> entitys) {
+    public <T> boolean replace(Collection<T> entitys) {
         boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
@@ -163,7 +163,7 @@ public class Dborm {
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean update(List<T> entitys) {
+    public <T> boolean update(Collection<T> entitys) {
         boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
@@ -191,7 +191,7 @@ public class Dborm {
      * @param entitys 实体类集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean saveOrUpdate(List<T> entitys) {
+    public <T> boolean saveOrUpdate(Collection<T> entitys) {
         boolean result = true;
         if (entitys != null && entitys.size() > 0) {
             Connection conn = getConnection();
@@ -234,7 +234,7 @@ public class Dborm {
      * @param entitys 实体类集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean saveOrReplace(List<T> entitys) {
+    public <T> boolean saveOrReplace(Collection<T> entitys) {
         boolean result = true;
         if (entitys != null && entitys.size() > 0) {
             Connection conn = getConnection();
@@ -277,7 +277,7 @@ public class Dborm {
      * @param entitys 实体对象集合
      * @return true:执行成功 false:执行失败或空的参数
      */
-    public <T> boolean delete(List<T> entitys) {
+    public <T> boolean delete(Collection<T> entitys) {
         boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
@@ -845,7 +845,7 @@ public class Dborm {
      * @author COCHO
      * @time 2013-6-7下午3:08:45
      */
-    private boolean execSql(List<PairDborm<String, List>> execSqlPairList) {
+    private boolean execSql(Collection<PairDborm<String, List>> execSqlPairList) {
         boolean result = false;
         if (execSqlPairList != null && execSqlPairList.size() > 0) {
             result = execSqlByTransaction(execSqlPairList);
@@ -877,7 +877,7 @@ public class Dborm {
     }
 
 
-    private boolean execSqlByTransaction(List<PairDborm<String, List>> pairList) {
+    private boolean execSqlByTransaction(Collection<PairDborm<String, List>> pairList) {
         boolean result = true;
         if (autoCommit) {
             result = execute(pairList);
@@ -887,7 +887,7 @@ public class Dborm {
         return result;
     }
 
-    private boolean execute(List<PairDborm<String, List>> execSqlPairList) {
+    private boolean execute(Collection<PairDborm<String, List>> execSqlPairList) {
         boolean result = false;
         if (execSqlPairList != null && execSqlPairList.size() > 0) {
             Connection conn = getConnection();
@@ -925,14 +925,14 @@ public class Dborm {
         }
     }
 
-    private <T> List<T> entityToEntityList(T entity) {
-        List<T> entitys = new ArrayList<T>();
+    private <T> Collection<T> entityToEntityList(T entity) {
+        Collection<T> entitys = new ArrayList<T>();
         entitys.add(entity);
         return entitys;
     }
 
-    private List toArrayList(Object... bindArgs) {
-        List result = new ArrayList();
+    private Collection toArrayList(Object... bindArgs) {
+        Collection result = new ArrayList();
         if (bindArgs != null) {
             result = Arrays.asList(bindArgs);
         }
