@@ -1,4 +1,4 @@
-package cn.cocho.dborm.test.utils;
+package cn.cocho.dborm.test.utils.db;
 
 import cn.cocho.dborm.utils.DbormLogger;
 

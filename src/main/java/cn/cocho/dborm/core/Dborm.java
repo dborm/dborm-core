@@ -76,7 +76,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean insert(T entity) {
-        return insert(entityToEntityList(entity));
+        return insert(toEntityCollection(entity));
     }
 
 
@@ -112,7 +112,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean replace(T entity) {
-        return replace(entityToEntityList(entity));
+        return replace(toEntityCollection(entity));
     }
 
     /**
@@ -149,7 +149,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean update(T entity) {
-        return update(entityToEntityList(entity));
+        return update(toEntityCollection(entity));
     }
 
     /**
@@ -182,7 +182,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数或空的实体
      */
     public <T> boolean saveOrUpdate(T entity) {
-        return saveOrUpdate(entityToEntityList(entity));
+        return saveOrUpdate(toEntityCollection(entity));
     }
 
     /**
@@ -225,7 +225,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean saveOrReplace(T entity) {
-        return saveOrReplace(entityToEntityList(entity));
+        return saveOrReplace(toEntityCollection(entity));
     }
 
     /**
@@ -268,7 +268,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean delete(T entity) {
-        return delete(entityToEntityList(entity));
+        return delete(toEntityCollection(entity));
     }
 
     /**
@@ -299,7 +299,7 @@ public class Dborm {
      * @return 实体或null
      */
     public <T> T getEntity(Class<?> entityClass, String sql, Object... bindArgs) {
-        return getEntity(entityClass, sql, toArrayList(bindArgs));
+        return getEntity(entityClass, sql, toList(bindArgs));
     }
 
     /**
@@ -335,7 +335,7 @@ public class Dborm {
      * @return 实体或null
      */
     public <T> T getEntity(Class<?> entityClass, Connection conn, String sql, Object... bindArgs) {
-        return getEntity(entityClass, conn, sql, toArrayList(bindArgs));
+        return getEntity(entityClass, conn, sql, toList(bindArgs));
     }
 
     /**
@@ -372,7 +372,7 @@ public class Dborm {
      * @time 2013-5-6上午11:23:46
      */
     public <T> List<T> getEntities(Class<?> entityClass, String sql, Object... bindArgs) {
-        return getEntities(entityClass, sql, toArrayList(bindArgs));
+        return getEntities(entityClass, sql, toList(bindArgs));
     }
 
     /**
@@ -412,7 +412,7 @@ public class Dborm {
      * @time 2013-5-6上午11:23:46
      */
     public <T> List<T> getEntities(Class<?> entityClass, Connection conn, String sql, Object... bindArgs) {
-        return getEntities(entityClass, conn, sql, toArrayList(bindArgs));
+        return getEntities(entityClass, conn, sql, toList(bindArgs));
     }
 
     /**
@@ -459,7 +459,7 @@ public class Dborm {
      * @time 2013-6-7上午10:42:18
      */
     public List<Map<String, Object>> getEntities(Class<?>[] entityClasses, String sql, Object... bindArgs) {
-        return getEntities(entityClasses, sql, toArrayList(bindArgs));
+        return getEntities(entityClasses, sql, toList(bindArgs));
     }
 
     /**
@@ -588,7 +588,7 @@ public class Dborm {
      * @return 实体集合或无实体的list集合
      */
     public <T> List<T> getEntities(ResultMapper<T> mapper, String sql, Object... bindArgs) {
-        return getEntities(mapper, sql, toArrayList(bindArgs));
+        return getEntities(mapper, sql, toList(bindArgs));
     }
 
     /**
@@ -721,7 +721,7 @@ public class Dborm {
      * @time 2013-5-15上午11:32:30
      */
     public int getCount(String sql, Object... bindArgs) {
-        return getCount(sql, toArrayList(bindArgs));
+        return getCount(sql, toList(bindArgs));
     }
 
     /**
@@ -781,7 +781,7 @@ public class Dborm {
      * @time 2013-5-6下午4:23:11
      */
     public boolean execSql(String sql, Object... bindArgs) {
-        return execSql(sql, toArrayList(bindArgs));
+        return execSql(sql, toList(bindArgs));
     }
 
     /**
@@ -812,7 +812,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public boolean execSql(Connection conn, String sql, Object... bindArgs) {
-        return execSql(conn, sql, toArrayList(bindArgs));
+        return execSql(conn, sql, toList(bindArgs));
     }
 
     /**
@@ -925,14 +925,22 @@ public class Dborm {
         }
     }
 
-    private <T> Collection<T> entityToEntityList(T entity) {
+    private <T> Collection<T> toEntityCollection(T entity) {
         Collection<T> entitys = new ArrayList<T>();
         entitys.add(entity);
         return entitys;
     }
 
-    private Collection toArrayList(Object... bindArgs) {
+    private Collection toCollection(Object... bindArgs) {
         Collection result = new ArrayList();
+        if (bindArgs != null) {
+            result = Arrays.asList(bindArgs);
+        }
+        return result;
+    }
+
+    private List toList(Object... bindArgs) {
+        List result = new ArrayList();
         if (bindArgs != null) {
             result = Arrays.asList(bindArgs);
         }

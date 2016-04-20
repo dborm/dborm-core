@@ -1,8 +1,8 @@
 package cn.cocho.dborm.test.init;
 
 import cn.cocho.dborm.core.Dborm;
-import cn.cocho.dborm.test.utils.DBLogger;
-import cn.cocho.dborm.test.utils.DataBaseManager;
+import cn.cocho.dborm.test.utils.db.DBLogger;
+import cn.cocho.dborm.test.utils.db.DataBaseManager;
 import cn.cocho.dborm.test.utils.domain.UserInfo;
 import cn.cocho.dborm.utils.DbormContexts;
 import org.junit.Test;
