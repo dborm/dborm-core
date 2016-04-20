@@ -3,12 +3,10 @@ package cn.cocho.dborm.core;
 import cn.cocho.dborm.utils.DbormContexts;
 import cn.cocho.dborm.utils.LoggerUtilsDborm;
 import cn.cocho.dborm.utils.PairDborm;
-import cn.cocho.dborm.utils.StringUtilsDborm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,18 +18,20 @@ import java.util.List;
  */
 public class SQLExecutor {
 
+
+    LoggerUtilsDborm loggerUtilsDborm = new LoggerUtilsDborm();
+
     /**
      * 执行SQL(并作SQL检查及输出)
      *
      * @param sql      sql语句
      * @param bindArgs 该SQL语句所需的参数
      * @param conn     数据库连接
-     * @throws SQLException
+     * @throws Exception
      * @author COCHO
      * @time 2013-6-7下午2:54:48
      */
-    public void execSQL(String sql, List bindArgs, Connection conn) throws SQLException {
-        checkSql(sql, bindArgs);
+    public void execSQL(String sql, List bindArgs, Connection conn) throws Exception {
         PreparedStatement pst = null;
         try {
             pst = conn.prepareStatement(sql);
@@ -40,7 +40,10 @@ public class SQLExecutor {
                     pst.setObject(i + 1, bindArgs.get(i));
                 }
             }
+            showSql(getSql(pst));
             pst.executeUpdate();
+        } catch (Exception e) {
+            throw e;
         } finally {
             if (pst != null) {
                 pst.close();
@@ -53,27 +56,31 @@ public class SQLExecutor {
      *
      * @param execSqlPairList 第一个参数为SQL语句， 第二个参数为SQL语句所需的参数
      * @param conn            数据库连接
-     * @throws SQLException
+     * @throws Exception
      * @author COCHO
      * @time 2013-5-6上午10:41:26
      */
-    public void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Connection conn) throws SQLException {
+    public void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Connection conn) throws Exception {
         PreparedStatement pst = null;
         try {
             conn.setAutoCommit(false);
+            StringBuffer sqlBuffer = new StringBuffer();
             for (PairDborm<String, List> pair : execSqlPairList) {
-                checkSql(pair.first, pair.second);
                 pst = conn.prepareStatement(pair.first);
                 if (pair.second != null) {
                     for (int x = 0; x < pair.second.size(); x++) {
                         pst.setObject(x + 1, pair.second.get(x));
                     }
                 }
+                sqlBuffer.append(getSql(pst));
+                sqlBuffer.append("\n");
                 pst.executeUpdate();
             }
             conn.commit();
-        } catch (SQLException e) {
+            loggerUtilsDborm.debug(sqlBuffer.toString());
+        } catch (Exception e) {
             conn.rollback();
+            loggerUtilsDborm.error("出异常的SQL如下:\n" + getSql(pst), e);
             throw e;
         } finally {
             if (pst != null) {
@@ -89,51 +96,35 @@ public class SQLExecutor {
      * @param bindArgs 查询语句所需的参数
      * @param conn     数据库连接
      * @return 查询结果集或null
-     * @throws SQLException
+     * @throws Exception
      * @author COCHO
      * @time 2013-5-6上午10:43:44
      */
-    public ResultSet getResultSet(String sql, List bindArgs, Connection conn) throws SQLException {
+    public ResultSet getResultSet(String sql, List bindArgs, Connection conn) throws Exception {
         ResultSet result;
-        checkSql(sql, bindArgs);
         PreparedStatement pst = conn.prepareStatement(sql);
         if (bindArgs != null) {
             for (int i = 0; i < bindArgs.size(); i++) {
                 pst.setObject(i + 1, bindArgs.get(i));
             }
         }
+        showSql(getSql(pst));
         result = pst.executeQuery();
         return result;
     }
 
+    private String getSql(PreparedStatement pst) {
+        String sql = "";
+        if (pst != null) {
+            String sqlContent = pst.toString();
+            sql = sqlContent.substring(sqlContent.indexOf(":") + 1);
+        }
+        return sql;
+    }
 
-    /**
-     * 检查SQL语句并做日志记录
-     *
-     * @param sql      sql语句
-     * @param bindArgs sql语句所绑定的参数
-     * @author COCHO
-     * @time 2013-5-7上午10:55:38
-     */
-    private void checkSql(String sql, List bindArgs) {
-        if (new StringUtilsDborm().isNotBlank(sql)) {
-            if (DbormContexts.showSql) {
-                StringBuilder sqlContent = new StringBuilder("运行的SQL语句如下：\n");
-                sqlContent.append(sql);
-                if (bindArgs != null) {
-                    sqlContent.append("\n所需的参数如下：\n");
-                    int size = bindArgs.size();
-                    for (int i = 0; i < size; i++) {
-                        sqlContent.append(bindArgs.get(i));
-                        if (i + 1 != size) {
-                            sqlContent.append(",");
-                        }
-                    }
-                }
-                new LoggerUtilsDborm().debug(sqlContent.toString());
-            }
-        } else {
-            throw new IllegalArgumentException("需要执行的SQL语句不能为空!");
+    private void showSql(String sql) {
+        if (DbormContexts.showSql) {
+            loggerUtilsDborm.debug(sql);
         }
     }
 
