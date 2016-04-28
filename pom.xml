@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <groupId>cn.cocho.web.lib.dborm</groupId>
+    <groupId>org.dborm.core</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dborm-core</artifactId>
     <packaging>jar</packaging>
@@ -9,7 +9,8 @@
 
 
     <name>dborm-core Maven Webapp</name>
-    <url>http://maven.apache.org</url>
+    <url>http://www.dborm.org</url>
+
     <dependencies>
 
         <!--测试相关的依赖开始-->
