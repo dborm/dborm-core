@@ -2,10 +2,12 @@ package org.dborm.core.test.utils.domain;
 
 
 import org.dborm.core.annotation.Column;
+import org.dborm.core.annotation.Relation;
 import org.dborm.core.annotation.Table;
 import org.dborm.core.domain.BaseDomain;
 
 import java.util.Date;
+import java.util.List;
 
 @Table
 public class UserInfo extends BaseDomain {
@@ -24,6 +26,12 @@ public class UserInfo extends BaseDomain {
 
     @Column
     private Date createTime;
+
+    @Relation
+    BookInfo bookInfo;
+
+    @Relation
+    List<BookInfo> bookInfos;
 
     public String getId() {
         return id;
@@ -63,5 +71,21 @@ public class UserInfo extends BaseDomain {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public List<BookInfo> getBookInfos() {
+        return bookInfos;
+    }
+
+    public void setBookInfos(List<BookInfo> bookInfos) {
+        this.bookInfos = bookInfos;
+    }
+
+    public BookInfo getBookInfo() {
+        return bookInfo;
+    }
+
+    public void setBookInfo(BookInfo bookInfo) {
+        this.bookInfo = bookInfo;
     }
 }

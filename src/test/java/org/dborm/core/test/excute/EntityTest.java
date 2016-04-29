@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * 单个实体对象的增删改操作
  */
-public class SingleEntityTest extends BaseTest {
+public class EntityTest extends BaseTest {
 
 
     @Before

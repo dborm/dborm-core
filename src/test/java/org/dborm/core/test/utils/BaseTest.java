@@ -30,6 +30,7 @@ public class BaseTest {
     public static BookInfo getBookInfo() {
         BookInfo bookInfo = new BookInfo();
         bookInfo.setId(BOOK_ID);
+        bookInfo.setUserId(USER_ID);
         bookInfo.setName("《代码简洁之道》");
         bookInfo.setPrice(55.0);
         bookInfo.setLooked(true);

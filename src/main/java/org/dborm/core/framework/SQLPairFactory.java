@@ -7,11 +7,8 @@ import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * 将实体对象解析成SQL语句及对应的参数对
@@ -32,8 +29,6 @@ public class SQLPairFactory {
     EntityResolver entityResolver = new EntityResolver();
     DataTypeConverter dataTypeConverter = new DataTypeConverter();
     ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
-//    dborm.getDataBase() dborm.getDataBase() = new dborm.getDataBase()();
-
 
     public <T> PairDborm<String, List> insert(T entity) {
         entity = dborm.getDataBase().beforeInsert(entity);
@@ -50,7 +45,7 @@ public class SQLPairFactory {
     public <T> List<PairDborm<String, List>> insertDeep(T entity) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         pairList.add(insert(entity));
-        pairList.addAll(getRelationPair(entity, PairType.INSERT));
+        pairList.addAll(getRelationPair(entity, PairType.INSERT, null));
         return pairList;
     }
 
@@ -70,7 +65,7 @@ public class SQLPairFactory {
     public <T> List<PairDborm<String, List>> replaceDeep(T entity) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         pairList.add(replace(entity));
-        pairList.addAll(getRelationPair(entity, PairType.REPLACE));
+        pairList.addAll(getRelationPair(entity, PairType.REPLACE, null));
         return pairList;
     }
 
@@ -89,7 +84,7 @@ public class SQLPairFactory {
     public <T> List<PairDborm<String, List>> deleteDeep(T entity) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         pairList.add(delete(entity));
-        pairList.addAll(getRelationPair(entity, PairType.DELETE));
+        pairList.addAll(getRelationPair(entity, PairType.DELETE, null));
         return pairList;
     }
 
@@ -127,7 +122,7 @@ public class SQLPairFactory {
     public <T> List<PairDborm<String, List>> updateDeep(T entity) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         pairList.add(update(entity));
-        pairList.addAll(getRelationPair(entity, PairType.UPDATE));
+        pairList.addAll(getRelationPair(entity, PairType.UPDATE, null));
         return pairList;
     }
 
@@ -140,7 +135,7 @@ public class SQLPairFactory {
         } else {
             pairList.add(insert(entity));
         }
-        pairList.addAll(getRelationSavePair(entity, PairType.SAVEORREPLACE, conn));
+        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_REPLACE, conn));
         return pairList;
     }
 
@@ -153,7 +148,7 @@ public class SQLPairFactory {
         } else {
             pairList.add(insert(entity));
         }
-        pairList.addAll(getRelationSavePair(entity, PairType.SAVEORUPDATE, conn));
+        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_UPDATE, conn));
         return pairList;
     }
 
@@ -218,51 +213,7 @@ public class SQLPairFactory {
      * 当前的级联操作类型
      */
     private enum PairType {
-        INSERT, REPLACE, DELETE, UPDATE, SAVEORREPLACE, SAVEORUPDATE
-    }
-
-    /**
-     * 获取级联对象的SQL语句对
-     *
-     * @param entity 对象
-     * @param type   操作类型
-     * @return SQL操作集合
-     * @author COCHO
-     * @time 2013-6-5下午1:55:14
-     */
-    private <T> List<PairDborm<String, List>> getRelationPair(T entity, PairType type) {
-        List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
-        Class<?> entityClass = entity.getClass();
-        TableBean table = CacheDborm.getCache().getCache().getTablesCache(entityClass);
-        Set<String> relations = table.getRelation();
-        if (relations.size() > 0) {
-            for (String fieldName : relations) {
-                Field relationField = reflectUtils.getFieldByName(entityClass, fieldName);
-                List<?> relationObjList = (List<?>) reflectUtils.getFieldValue(relationField, entity);
-                if (relationObjList == null) {
-                    continue;
-                }
-                for (Object relationObj : relationObjList) {
-                    switch (type) {
-                        case INSERT:
-                            pairList.addAll(insertDeep(relationObj));
-                            break;
-                        case REPLACE:
-                            pairList.addAll(replaceDeep(relationObj));
-                            break;
-                        case DELETE:
-                            pairList.addAll(deleteDeep(relationObj));
-                            break;
-                        case UPDATE:
-                            pairList.addAll(updateDeep(relationObj));
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-        return pairList;
+        INSERT, REPLACE, DELETE, UPDATE, SAVE_OR_REPLACE, SAVE_OR_UPDATE
     }
 
     /**
@@ -275,7 +226,7 @@ public class SQLPairFactory {
      * @author COCHO
      * @time 2013-6-5下午1:55:14
      */
-    private <T> List<PairDborm<String, List>> getRelationSavePair(T entity, PairType type, Connection conn) {
+    private <T> List<PairDborm<String, List>> getRelationPair(T entity, PairType type, Connection conn) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         Class<?> entityClass = entity.getClass();
         TableBean table = CacheDborm.getCache().getCache().getTablesCache(entityClass);
@@ -283,37 +234,46 @@ public class SQLPairFactory {
         if (relations.size() > 0) {
             for (String fieldName : relations) {
                 Field relationField = reflectUtils.getFieldByName(entityClass, fieldName);
-                List<?> relationObjList = (List<?>) reflectUtils.getFieldValue(relationField, entity);
-                if (relationObjList == null) {
-                    continue;
-                }
-                for (Object relationObj : relationObjList) {
-                    switch (type) {
-                        case INSERT:
-                            pairList.addAll(insertDeep(relationObj));
-                            break;
-                        case REPLACE:
-                            pairList.addAll(replaceDeep(relationObj));
-                            break;
-                        case DELETE:
-                            pairList.addAll(deleteDeep(relationObj));
-                            break;
-                        case UPDATE:
-                            pairList.addAll(updateDeep(relationObj));
-                            break;
-                        case SAVEORREPLACE:
-                            pairList.addAll(saveOrReplaceDeep(relationObj, conn));
-                            break;
-                        case SAVEORUPDATE:
-                            pairList.addAll(saveOrUpdateDeep(relationObj, conn));
-                            break;
-                        default:
-                            break;
+                Object relationObj = reflectUtils.getFieldValue(relationField, entity);
+                if (relationObj != null) {
+                    if (relationObj instanceof Collection) {
+                        List relationObjList = (List) reflectUtils.getFieldValue(relationField, entity);
+                        for (Object obj : relationObjList) {
+                            relation(pairList, obj, type, conn);
+                        }
+                    } else {
+                        relation(pairList, relationObj, type, conn);
                     }
                 }
             }
         }
         return pairList;
+    }
+
+
+    private void relation(List<PairDborm<String, List>> pairList, Object relationObj, PairType type, Connection conn) {
+        switch (type) {
+            case INSERT:
+                pairList.addAll(insertDeep(relationObj));
+                break;
+            case REPLACE:
+                pairList.addAll(replaceDeep(relationObj));
+                break;
+            case DELETE:
+                pairList.addAll(deleteDeep(relationObj));
+                break;
+            case UPDATE:
+                pairList.addAll(updateDeep(relationObj));
+                break;
+            case SAVE_OR_REPLACE:
+                pairList.addAll(saveOrReplaceDeep(relationObj, conn));
+                break;
+            case SAVE_OR_UPDATE:
+                pairList.addAll(saveOrUpdateDeep(relationObj, conn));
+                break;
+            default:
+                break;
+        }
     }
 
 

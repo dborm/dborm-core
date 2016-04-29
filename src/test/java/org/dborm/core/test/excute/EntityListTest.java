@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * 多个实体对象的增删改操作
  */
-public class ListEntityTest extends BaseTest {
+public class EntityListTest extends BaseTest {
 
 
     @Before
