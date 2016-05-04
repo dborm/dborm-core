@@ -1,6 +1,4 @@
-package org.dborm.core.test.utils.db;
-
-import org.dborm.core.utils.DbormLogger;
+package org.dborm.core.utils;
 
 import java.util.Date;
 
@@ -10,9 +8,9 @@ import java.util.Date;
  * @author COCHO
  * @date 2013-4-17 下午3:07:28
  */
-public class DBLogger implements DbormLogger {
+public class DbormLoggerDefault implements DbormLogger {
 
-    private String commonTarget = "cn.cocho.dborm";
+    private String commonTarget = "www.dborm.org";
 
 
     /**
@@ -32,7 +30,7 @@ public class DBLogger implements DbormLogger {
      * 异常
      *
      * @param msg 目标类路径
-     * @param e      异常对象
+     * @param e   异常对象
      * @author COCHO
      * @time 2013-4-22下午5:03:03
      */

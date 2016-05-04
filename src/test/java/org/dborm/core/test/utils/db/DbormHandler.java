@@ -13,7 +13,7 @@ public class DbormHandler {
 
     public static synchronized Dborm getDborm() {
         if (dborm == null) {
-            dborm = new Dborm(new DataBaseManager(), new DBLogger());
+            dborm = new Dborm(new DataBaseManager());
         }
         return dborm;
     }

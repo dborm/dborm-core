@@ -1,7 +1,6 @@
 package org.dborm.core.test.init;
 
 import org.dborm.core.framework.Dborm;
-import org.dborm.core.test.utils.db.DBLogger;
 import org.dborm.core.test.utils.db.DataBaseManager;
 import org.dborm.core.test.utils.domain.UserInfo;
 import org.dborm.core.utils.DbormContexts;

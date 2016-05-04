@@ -38,7 +38,7 @@ public class DataBaseManager extends DbormDataBase {
             Class.forName(driver);// 加载驱动程序
             conn = DriverManager.getConnection(url, username, password);// 连续数据库
         } catch (Exception e) {
-            new DBLogger().error("创建数据库连接出错！", e);
+            e.printStackTrace();
         }
 
         return conn;
@@ -46,7 +46,6 @@ public class DataBaseManager extends DbormDataBase {
 
     @Override
     public <T> T beforeInsert(T entity) {
-
         return super.beforeInsert(entity);
     }
 }

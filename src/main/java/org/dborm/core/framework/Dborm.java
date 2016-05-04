@@ -31,7 +31,6 @@ public class Dborm {
     public Dborm(DbormDataBase dataBase, DbormLogger logger) {
         this.dataBase = dataBase;
         DbormContexts.log = logger;
-        DbormContexts.showSql = true;
     }
 
 
