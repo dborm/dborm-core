@@ -21,7 +21,7 @@ public class DbormContexts {
     /**
      * 数据库使用的编码
      */
-    public static String encode = "utf8";
+    public static String encode = "UTF-8";
 
     /**
      * 日志记录工具类
