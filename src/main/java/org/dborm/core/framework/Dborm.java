@@ -577,62 +577,6 @@ public class Dborm {
     }
 
     /**
-     * 自定义数据映射规则
-     *
-     * @param <T> 数据的类型
-     */
-    public interface ResultMapper<T> {
-        T map(ResultSet rs);
-    }
-
-    /**
-     * 根据查询语句及自定义结果集转换类返回实体集合
-     *
-     * @param mapper   自定义的结果集与对象转换的类
-     * @param sql      查询语句
-     * @param bindArgs 查询语句所需的参数（该参数允许为null）
-     * @param <T>      结果集类型
-     * @return 实体集合或无实体的list集合
-     */
-    public <T> List<T> getEntities(ResultMapper<T> mapper, String sql, Object... bindArgs) {
-        return getEntities(mapper, sql, toList(bindArgs));
-    }
-
-    /**
-     * 根据查询语句及自定义结果集转换类返回实体集合
-     *
-     * @param mapper   自定义的结果集与对象转换的类
-     * @param sql      查询语句
-     * @param bindArgs 查询语句所需的参数（该参数允许为null）
-     * @param <T>      结果集类型
-     * @return 实体集合或无实体的list集合
-     */
-    public <T> List<T> getEntities(ResultMapper<T> mapper, String sql, List bindArgs) {
-        List<T> results = new ArrayList<T>();
-        Connection conn = null;
-        ResultSet rs = null;
-        try {
-            conn = dataBase.getConnection();
-            rs = sqlExecutor.getResultSet(sql, bindArgs, conn);
-            while (rs.next()) {
-                results.add(mapper.map(rs));
-            }
-        } catch (Exception e) {
-            loggerUtils.error(Dborm.class.getName(), e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                dataBase.closeConn(conn);
-            } catch (Exception ignored) {
-            }
-        }
-        return results;
-    }
-
-
-    /**
      * 根据对象主键判断对象是否存在
      *
      * @param entity 实体对象

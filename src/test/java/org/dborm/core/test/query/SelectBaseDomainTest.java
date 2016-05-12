@@ -1,30 +1,17 @@
 package org.dborm.core.test.query;
 
 import org.dborm.core.domain.BaseDomain;
-import org.dborm.core.test.utils.BaseTest;
+import org.dborm.core.test.utils.BaseSelectTest;
 import org.dborm.core.test.utils.db.DbormHandler;
 import org.dborm.core.test.utils.domain.BookInfo;
-import org.dborm.core.test.utils.domain.UserInfo;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * 默认值的使用
+ * 将查询条件的值映射到BaseDomain中（可以接受任意查询结果）
  */
-public class SelectBaseDomainTest extends BaseTest {
-
-
-    @Before
-    public void before() {
-        UserInfo userInfo = getUserInfo();
-        DbormHandler.getDborm().insert(userInfo);
-        BookInfo bookInfo = getBookInfo();
-        bookInfo.setUserId(userInfo.getId());
-        DbormHandler.getDborm().insert(bookInfo);
-    }
+public class SelectBaseDomainTest extends BaseSelectTest {
 
     @Test
     public void testUseBaseDomain() {
@@ -42,12 +29,6 @@ public class SelectBaseDomainTest extends BaseTest {
         assertEquals(BOOK_ID, bookInfo.getId());
         assertEquals(USER_ID, bookInfo.getUserId());//如列为user_id,取值的时候需要使用userId(自动将下划线格式转换为驼峰格式)
         assertEquals(USER_NICKNAME, bookInfo.getParam("nickname"));//如果查询结果中有某一列的值,但是接受结果的类中没有该属性,则该值将会存储到param中
-    }
-
-
-    @After
-    public void after() {
-        cleanTable();
     }
 
 
