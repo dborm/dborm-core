@@ -3,14 +3,21 @@
 
     <table class_path="org.dborm.core.test.utils.domain.UserInfo" tableName="user_info">
         <column default_value="null" field_name="id" is_primary_key="true"/>
-        <column default_value="null" field_name="id" is_primary_key="true"/>
         <column default_value="null" field_name="name" is_primary_key="false"/>
-        <column default_value="null" field_name="age" is_primary_key="false"/>
-        <column default_value="null" field_name="isBoy" is_primary_key="false"/>
-        <column default_value="null" field_name="birthday" is_primary_key="false"/>
-        <column default_value="0" field_name="loginNum" is_primary_key="false"/>
-        <relation field_name="qsmOptionList"/>
-        <relation field_name="qsmInfoList"/>
+        <column field_name="nickname"/>
+        <column field_name="age" default_value="18"/>
+        <column field_name="createTime"/>
+        <relation field_name="bookInfo"/>
+        <relation field_name="bookInfos"/>
     </table>
+
+    <!--可以将多个表的描述信息放在同一个schema文件中-->
+    <!--<table class_path="org.dborm.core.test.utils.domain.BookInfo">-->
+    <!--<column default_value="null" field_name="id" is_primary_key="true"/>-->
+    <!--<column default_value="null" field_name="userId" is_primary_key="true"/>-->
+    <!--<column field_name="price"/>-->
+    <!--<column field_name="looked"/>-->
+    <!--<column field_name="readTime"/>-->
+    <!--</table>-->
 
 </tables>

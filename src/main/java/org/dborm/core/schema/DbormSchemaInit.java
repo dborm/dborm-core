@@ -29,6 +29,13 @@ public class DbormSchemaInit {
 
     private String schemaPath;
 
+    public DbormSchemaInit() {
+    }
+
+    public DbormSchemaInit(String schemaPath) {
+        this.schemaPath = schemaPath;
+    }
+
     /**
      * 初始化表结构
      *

@@ -33,6 +33,12 @@ public class Dborm {
         DbormContexts.log = logger;
     }
 
+    public Dborm(DbormDataBase dataBase, DbormLogger logger, boolean showSql) {
+        this.dataBase = dataBase;
+        DbormContexts.log = logger;
+        DbormContexts.showSql = showSql;
+    }
+
 
     /**
      * 事务缓冲区
@@ -456,9 +462,10 @@ public class Dborm {
     }
 
     /**
-     * 多表联合查询
+     * 组合查询（连接的多个表中有相同字段的时候不建议使用该方式）
+     * 可以将查询结果映射到多个实体组中
      *
-     * @param entityClasses 实体类集合
+     * @param entityClasses 实体类组合
      * @param sql           查询语句
      * @param bindArgs      查询语句所需的参数（该参数允许为null）
      * @return 实体集合或无实体的list集合
@@ -470,9 +477,10 @@ public class Dborm {
     }
 
     /**
-     * 多表联合查询
+     * 组合查询（连接的多个表中有相同字段的时候不建议使用该方式）
+     * 可以将查询结果映射到多个实体组中
      *
-     * @param entityClasses 实体类集合
+     * @param entityClasses 实体类组合
      * @param sql           查询语句
      * @param bindArgs      查询语句所需的参数（该参数允许为null）
      * @return 实体集合或无实体的list集合
@@ -509,7 +517,7 @@ public class Dborm {
     }
 
     /**
-     * 根据实例模版查询（根据实例对象中属性值不为空的属性做过滤条件，默认情况下，添加之间是AND关系）
+     * 实例查询（根据实例对象中属性值不为空的属性做过滤条件，默认情况下，添加之间是AND关系）
      *
      * @param example 实例模版
      * @param <T>     实例类型
@@ -520,7 +528,7 @@ public class Dborm {
     }
 
     /**
-     * 根据实例模版查询（根据实例对象中属性值不为空的属性做过滤条件）
+     * 实例查询（根据实例对象中属性值不为空的属性做过滤条件）
      *
      * @param example 实例模版
      * @param isAnd   true：使用AND连接多个条件，false：使用OR连接多个条件
@@ -542,7 +550,7 @@ public class Dborm {
     }
 
     /**
-     * 根据实例模版查询（根据实例对象中属性值不为空的属性做过滤条件，默认情况下，添加之间是AND关系）
+     * 实例查询（根据实例对象中属性值不为空的属性做过滤条件，默认情况下，添加之间是AND关系）
      *
      * @param example 实例模版
      * @param <T>     实例类型
@@ -553,7 +561,7 @@ public class Dborm {
     }
 
     /**
-     * 根据实例模版查询（根据实例对象中属性值不为空的属性做过滤条件）
+     * 实例查询（根据实例对象中属性值不为空的属性做过滤条件）
      *
      * @param example 实例模版
      * @param isAnd   true：使用AND连接多个条件，false：使用OR连接多个条件

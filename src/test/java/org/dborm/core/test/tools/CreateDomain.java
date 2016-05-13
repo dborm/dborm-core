@@ -5,7 +5,7 @@ import org.dborm.core.utils.StringUtilsDborm;
 import java.sql.*;
 
 /**
- * 生成Domain相关的信息(该类为简单工具栏，生成核心代码，部分代码需要自己根据情况完善)
+ * 生成Domain相关的信息(该类为简单工具栏，生成核心代码，生成之后需要自己根据情况修改完善)
  */
 public class CreateDomain {
 
@@ -35,12 +35,14 @@ public class CreateDomain {
         StringBuilder builder = new StringBuilder();
 
         builder.append("\r\n\r\n");
-        builder.append("import cn.cocho.dborm.annotation.Table;\r\n");
-        builder.append("import cn.cocho.dborm.annotation.Column;");
+        builder.append("import org.dborm.core.domain.BaseDomain;\r\n");
+        builder.append("import org.dborm.core.annotation.Table;\r\n");
+        builder.append("import org.dborm.core.annotation.Column;");
         builder.append("\r\n\r\n");
         builder.append("@Table\r\n");
         builder.append("public class ");
         builder.append(new StringUtilsDborm().underlineToHumpName(tableName, true));
+        builder.append(" extents BaseDomain ");
         builder.append("{\r\n\r\n");
         for (int i = 1; i <= data.getColumnCount(); i++) {
 //            @Column(isPrimaryKey = true, defaultValue = "0")
@@ -73,10 +75,10 @@ public class CreateDomain {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://127.0.0.1:3306/mdl-test?useUnicode=true&characterEncoding=utf8";
-            String user = "shk";
-            String pass = "shk";
-            conn = DriverManager.getConnection(url, user, pass);
+            String url = "jdbc:mysql://rds3tmsxzi96h6921824.mysql.rds.aliyuncs.com:3306/dborm_test_db?useUnicode=true&characterEncoding=utf8";
+            String username = "dborm";
+            String password = "dborm_test";
+            conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

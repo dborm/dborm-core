@@ -1,10 +1,13 @@
 package org.dborm.core.test.query;
 
 import org.dborm.core.framework.SQLExecutor;
-import org.dborm.core.test.utils.BaseSelectTest;
+import org.dborm.core.test.utils.BaseTest;
 import org.dborm.core.test.utils.db.DbormHandler;
+import org.dborm.core.test.utils.domain.BookInfo;
 import org.dborm.core.test.utils.domain.UserInfo;
 import org.dborm.core.utils.DbormDataBase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -18,7 +21,17 @@ import static org.junit.Assert.assertEquals;
  * 查询相关的测试用例
  * Created by shk
  */
-public class SelectTest extends BaseSelectTest {
+public class SelectTest extends BaseTest {
+
+    @BeforeClass
+    public static void before() {
+        UserInfo userInfo = getUserInfo();
+        DbormHandler.getDborm().insert(userInfo);
+        BookInfo bookInfo = getBookInfo();
+        bookInfo.setUserId(userInfo.getId());
+        DbormHandler.getDborm().insert(bookInfo);
+    }
+
 
     @Test
     public void testGetEntity() {
@@ -85,6 +98,13 @@ public class SelectTest extends BaseSelectTest {
             }
         }
     }
+
+
+    @AfterClass
+    public static void after() {
+        cleanTable();
+    }
+
 
 
 }
