@@ -9,7 +9,14 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * 通过Dborm深度操作数据库（级联操作数据库，自动添加事务，操作成功返回true,操作失败返回false）
+ * Dborm（数据库对象映射操作框架）
+ * Dborm框架操作数据库的核心API
+ * <p>
+ * 框架名字来由:
+ * Dborm由DB加ORM组合得来,合并组成单词,读音:拼音读作[di bao mu], 英文音标为[:dɪ'bɔːm]
+ * DB（DataBase）是数据库的简称,ORM（Object Relational Mapping）是对象关系映射,
+ * 本框架的核心思路是将对象映射解析为数据库操作的SQL（曾删改等操作）及SQL查询的返回结果映射为对象（查询操作）。
+ * <p>
  *
  * @author COCHO
  */

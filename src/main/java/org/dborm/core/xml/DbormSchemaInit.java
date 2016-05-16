@@ -1,4 +1,4 @@
-package org.dborm.core.schema;
+package org.dborm.core.xml;
 
 import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.domain.TableBean;
