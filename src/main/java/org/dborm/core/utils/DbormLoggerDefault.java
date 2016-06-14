@@ -22,7 +22,7 @@ public class DbormLoggerDefault implements DbormLogger {
      * @time 2013-6-17下午04:12:48
      */
     public void debug(String msg) {
-        System.out.println("日期：" + new Date() + " DEBUG  TARGET:" + commonTarget + "      " + "MSG:" + msg);
+        System.out.println("日期：" + new Date() + " DEBUG  TARGET:" + commonTarget + " " + "MSG:    " + msg);
 
     }
 
@@ -35,7 +35,7 @@ public class DbormLoggerDefault implements DbormLogger {
      * @time 2013-4-22下午5:03:03
      */
     public void error(String msg, Throwable e) {
-        System.out.println("日期：" + new Date() + " ERROR MSG:" + msg);
+        System.out.println("日期：" + new Date() + " ERROR MSG:    " + msg);
         e.printStackTrace();
     }
 

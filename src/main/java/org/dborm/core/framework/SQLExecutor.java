@@ -7,7 +7,10 @@ import org.dborm.core.utils.PairDborm;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +43,7 @@ public class SQLExecutor {
                     pst.setObject(i + 1, bindArgs.get(i));
                 }
             }
-            showSql(getSql(pst));
+            showSql(getSql(sql, bindArgs));
             pst.executeUpdate();
         } catch (Exception e) {
             throw e;
@@ -62,25 +65,27 @@ public class SQLExecutor {
      */
     public void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Connection conn) throws Exception {
         PreparedStatement pst = null;
+        String currentSql = "";
         try {
             conn.setAutoCommit(false);
             StringBuffer sqlBuffer = new StringBuffer();
             for (PairDborm<String, List> pair : execSqlPairList) {
+                currentSql = getSql(pair.first, pair.second);
+                sqlBuffer.append(currentSql);
+                sqlBuffer.append(";\n");
                 pst = conn.prepareStatement(pair.first);
                 if (pair.second != null) {
                     for (int x = 0; x < pair.second.size(); x++) {
                         pst.setObject(x + 1, pair.second.get(x));
                     }
                 }
-                sqlBuffer.append(getSql(pst));
-                sqlBuffer.append("\n");
                 pst.executeUpdate();
             }
             conn.commit();
             loggerUtilsDborm.debug(sqlBuffer.toString());
         } catch (Exception e) {
             conn.rollback();
-            loggerUtilsDborm.error("出异常的SQL如下:\n" + getSql(pst), e);
+            loggerUtilsDborm.error("出异常的SQL如下:\n" + currentSql, e);
             throw e;
         } finally {
             if (pst != null) {
@@ -108,16 +113,35 @@ public class SQLExecutor {
                 pst.setObject(i + 1, bindArgs.get(i));
             }
         }
-        showSql(getSql(pst));
+        showSql(getSql(sql, bindArgs));
         result = pst.executeQuery();
         return result;
     }
 
-    private String getSql(PreparedStatement pst) {
-        String sql = "";
-        if (pst != null) {
-            String sqlContent = pst.toString();
-            sql = sqlContent.substring(sqlContent.indexOf(":") + 1);
+    /**
+     * 检查SQL语句并做日志记录
+     *
+     * @param sql      sql语句
+     * @param bindArgs sql语句所绑定的参数
+     * @author COCHO
+     * @time 2013-5-7上午10:55:38
+     */
+    private String getSql(String sql, List bindArgs) {
+        if (sql != null && bindArgs != null) {
+            for (Object bindArg : bindArgs) {
+                String arg;
+                if (bindArg == null) {
+                    arg = "null";
+                } else if (bindArg instanceof Date) {
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss SSS");
+                    arg = "'" + format.format((Date) bindArg) + "'";
+                } else if (bindArg instanceof String) {
+                    arg = "'" + bindArg + "'";
+                } else {
+                    arg = bindArg.toString();
+                }
+                sql = sql.replaceFirst("[?]", arg);
+            }
         }
         return sql;
     }
