@@ -208,7 +208,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean saveOrUpdate(Collection<T> entitys) {
-        boolean result = true;
+        boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             Connection conn = getConnection();
             if (conn != null) {
@@ -220,11 +220,11 @@ public class Dborm {
 
                     if (autoCommit) {
                         sqlExecutor.execSQLUseTransaction(pairList, conn);
+                        result = true;
                     } else {
                         transactionSqlCache.addAll(pairList);
                     }
                 } catch (Exception e) {
-                    result = false;
                     loggerUtils.error(e);
                 } finally {
                     dataBase.closeConn(conn);
@@ -255,7 +255,7 @@ public class Dborm {
      * @return true:执行成功 false:执行失败或空的参数
      */
     public <T> boolean saveOrReplace(Collection<T> entitys) {
-        boolean result = true;
+        boolean result = false;
         if (entitys != null && entitys.size() > 0) {
             Connection conn = getConnection();
             if (conn != null) {
@@ -267,11 +267,11 @@ public class Dborm {
 
                     if (autoCommit) {
                         sqlExecutor.execSQLUseTransaction(pairList, conn);
+                        result = true;
                     } else {
                         transactionSqlCache.addAll(pairList);
                     }
                 } catch (Exception e) {
-                    result = false;
                     loggerUtils.error(e);
                 } finally {
                     dataBase.closeConn(conn);
@@ -844,7 +844,7 @@ public class Dborm {
 
 
     private boolean execSqlByTransaction(Collection<PairDborm<String, List>> pairList) {
-        boolean result = true;
+        boolean result = false;
         if (autoCommit) {
             result = execute(pairList);
         } else {
