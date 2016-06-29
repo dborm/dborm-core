@@ -1,7 +1,7 @@
 package org.dborm.core.framework;
 
 import org.dborm.core.domain.ColumnBean;
-import org.dborm.core.xml.SchemaConstants;
+import org.dborm.core.schema.SchemaConstants;
 import org.dborm.core.utils.DbormConstants;
 import org.dborm.core.utils.DbormContexts;
 import org.dborm.core.utils.ReflectUtilsDborm;
