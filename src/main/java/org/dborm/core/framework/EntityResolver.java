@@ -24,7 +24,6 @@ public class EntityResolver {
 
     StringUtilsDborm stringUtils = new StringUtilsDborm();
     ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
-    DataTypeConverter dataTypeConverter = new DataTypeConverter();
 
     /**
      * 获得实体类的全部属性
@@ -94,13 +93,13 @@ public class EntityResolver {
      * @return 实体对象
      * @throws SQLException
      */
-    public Object getEntity(Class<?> entityClass, ResultSet rs, String[] columnNames) throws SQLException {
+    public Object getEntity(Class<?> entityClass,  ResultSet rs, String[] columnNames) throws SQLException {
         Map<String, Field> fields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
         for (String columnName : columnNames) {
             Field field = fields.get(columnName);
             if (field != null) {
-                Object value = dataTypeConverter.columnValueToFieldValue(rs, columnName, field);
+                Object value = rs.getObject(columnName);
                 reflectUtils.setFieldValue(field, entity, value);
             }
         }
@@ -123,14 +122,14 @@ public class EntityResolver {
         for (String columnName : columnNames) {
             Field field = fields.get(columnName);
             if (field != null) {
-                Object value = dataTypeConverter.columnValueToFieldValue(rs, columnName, field);
+                Object value = rs.getObject(columnName);
                 reflectUtils.setFieldValue(field, entity, value);
             } else {//如果找不到该属性,则将值存放到Map集合中
                 if (putParam == null) {
                     putParam = reflectUtils.getMethod(entity, DbormConstants.BASE_PUT_METHOD, String.class, Object.class);
                 }
                 String name = stringUtils.underlineToHumpName(columnName, false);
-                Object value = dataTypeConverter.columnValueToFieldValue(rs, columnName, field);
+                Object value = rs.getObject(columnName);
                 reflectUtils.setMethodValue(entity, putParam, name, value);
             }
         }
@@ -155,7 +154,6 @@ public class EntityResolver {
         for (Entry<String, Field> entry : entrySet) {
             Field field = entry.getValue();
             Object value = reflectUtils.getFieldValue(field, entity);
-            value = dataTypeConverter.fieldValueToColumnValue(value);
             fieldValues.add(value);
         }
         return fieldValues;
@@ -185,7 +183,6 @@ public class EntityResolver {
                     value = defaultValue;
                 }
             }
-            value = dataTypeConverter.fieldValueToColumnValue(value);
             fieldValues.add(value);
         }
         return fieldValues;
@@ -209,7 +206,6 @@ public class EntityResolver {
             Field field = entry.getValue();
             Object value = reflectUtils.getFieldValue(field, entity);
             if (value != null) {
-                value = dataTypeConverter.fieldValueToColumnValue(value);
                 primaryKeyValues.add(value);
             } else {
                 String warnMessage = "警告: 属性(" + field.getName() + ") 在类(" + entityClass.getName() + ")里面是主键，不能为空!";
