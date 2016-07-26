@@ -27,17 +27,30 @@ public class DbormSchemaInit {
     StringUtilsDborm stringUtils = new StringUtilsDborm();
 
 
+    /**
+     * 初始化描述文件
+     *
+     * @param schemaBasePath 描述文件所在的基础路径（将会扫描该路径下的所有子文件）
+     * @throws Exception
+     */
     public void initSchema(String schemaBasePath) throws Exception {
         List<String> schemaFiles = getSchemaFiles(schemaBasePath);
         for (String schemaFile : schemaFiles) {
             String schemaFilePath = schemaBasePath + File.separator + schemaFile;
-            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaFilePath));
+            InputStream schemaInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(schemaFilePath);
+            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaInputStream));
         }
     }
 
-    public void initSchema(List<String> schemaFilesPath) throws Exception {
-        for (String schemaFilePath : schemaFilesPath) {
-            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaFilePath));
+    /**
+     * 通过描述文件初始化（该接口用于Android端等环境使用）
+     *
+     * @param schemasInputStream 描述文件的输入流
+     * @throws Exception
+     */
+    public void initSchema(List<InputStream> schemasInputStream) throws Exception {
+        for (InputStream schemaInputStream : schemasInputStream) {
+            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaInputStream));
         }
     }
 
@@ -47,40 +60,44 @@ public class DbormSchemaInit {
         if (url != null) {
             File file = new File(url.toURI());
             String[] files = file.list();
-            for (String fileName : files) {
-                if (fileName.toLowerCase().endsWith(".xml")) {// 避免不必要的文件产生干扰，如.svn文件
-                    schemaFiles.add(fileName);
+            if (files != null) {
+                for (String fileName : files) {
+                    if (fileName.toLowerCase().endsWith(".xml")) {// 避免不必要的文件产生干扰，如.svn文件
+                        schemaFiles.add(fileName);
+                    }
                 }
             }
         }
         return schemaFiles;
     }
 
-    private Map<String, TableBean> getSchemaByFile(String schemaFilePath) throws Exception {
+    private Map<String, TableBean> getSchemaByFile(InputStream schemaInputStream) throws Exception {
         Map<String, TableBean> tables = new HashMap<String, TableBean>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        Document document = null;
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(schemaFilePath);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        document = builder.parse(inputStream);
-        if (document != null) {
-            Element root = document.getDocumentElement();// 获得根元素
-            NodeList methodList = root.getElementsByTagName(SchemaConstants.TABLE);// 获得名称为method的元素集合
-            for (int i = 0; i < methodList.getLength(); i++) {// 遍历节点 DocumentBuilder builder=null;  DocumentBuilder builder=null; 
-                Element table = (Element) methodList.item(i);
-                String classPath = getStringMustAttributeValue(table, SchemaConstants.TABLE_CLASS_PATH);
-                String name = getStringAttributeValue(table, SchemaConstants.TABLE_NAME);
-                if (name == null) {
-                    String className = classPath.substring(classPath.lastIndexOf("\\."));
-                    stringUtils.humpToUnderlineName(className);
+        try {
+            Document document = builder.parse(schemaInputStream);
+            if (document != null) {
+                Element root = document.getDocumentElement();// 获得根元素
+                NodeList methodList = root.getElementsByTagName(SchemaConstants.TABLE);// 获得名称为method的元素集合
+                for (int i = 0; i < methodList.getLength(); i++) {// 遍历节点 DocumentBuilder builder=null;  DocumentBuilder builder=null; 
+                    Element table = (Element) methodList.item(i);
+                    String classPath = getStringMustAttributeValue(table, SchemaConstants.TABLE_CLASS_PATH);
+                    String name = getStringAttributeValue(table, SchemaConstants.TABLE_NAME);
+                    if (name == null) {
+                        String className = classPath.substring(classPath.lastIndexOf("\\."));
+                        stringUtils.humpToUnderlineName(className);
+                    }
+                    TableBean tableDomain = new TableBean();
+                    tableDomain.setClassPath(classPath);
+                    tableDomain.setTableName(name);
+                    tableDomain.setColumns(getColumnDomains(tableDomain, table));
+                    tableDomain.setRelation(getRelations(tableDomain, table));
+                    tables.put(classPath, tableDomain);
                 }
-                TableBean tableDomain = new TableBean();
-                tableDomain.setClassPath(classPath);
-                tableDomain.setTableName(name);
-                tableDomain.setColumns(getColumnDomains(tableDomain, table));
-                tableDomain.setRelation(getRelations(tableDomain, table));
-                tables.put(classPath, tableDomain);
             }
+        } finally {
+            schemaInputStream.close();
         }
         return tables;
     }
@@ -135,7 +152,7 @@ public class DbormSchemaInit {
         if (node != null) {
             return node.getNodeValue();
         } else {
-            throw new IllegalArgumentException("The attribute[" + attributeName + "] in " + node.getNamespaceURI() + " can't be null !");
+            throw new IllegalArgumentException("The attribute[" + attributeName + "] in " + column.getNamespaceURI() + " can't be null !");
         }
     }
 
