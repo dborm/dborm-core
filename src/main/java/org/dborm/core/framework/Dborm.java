@@ -489,7 +489,7 @@ public class Dborm {
     public List<Map<String, Object>> getEntities(Class<?>[] entityClasses, String sql, List bindArgs) {
         List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
         if (stringUtils.isNotBlank(sql) && entityClasses != null && entityClasses.length > 0) {
-            Connection conn = getConnection(); //TODO 连接未关闭
+            Connection conn = getConnection();
             if (conn != null) {
                 try {
                     List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, conn);
@@ -503,6 +503,8 @@ public class Dborm {
                     }
                 } catch (Exception e) {
                     loggerUtils.error(e);
+                } finally {
+                    dataBase.closeConn(conn);
                 }
             }
         }

@@ -18,4 +18,9 @@ public class DbormHandler {
         return dborm;
     }
 
+    //也可以不用单例模式
+//    public static Dborm getDborm() {
+//        return new Dborm(new DataBaseManager());
+//    }
+
 }
