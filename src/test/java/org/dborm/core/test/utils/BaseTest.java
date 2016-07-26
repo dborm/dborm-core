@@ -1,6 +1,6 @@
 package org.dborm.core.test.utils;
 
-import org.dborm.core.test.utils.db.DbormHandler;
+import org.dborm.core.test.utils.db.DbormManager;
 import org.dborm.core.test.utils.domain.BookInfo;
 import org.dborm.core.test.utils.domain.UserInfo;
 
@@ -52,9 +52,9 @@ public class BaseTest {
 
 
     public static void cleanTable() {
-        boolean result = DbormHandler.getDborm().execSql("delete from user_info");
+        boolean result = DbormManager.getDborm().execSql("delete from user_info");
         assertEquals(true, result);
-        result = DbormHandler.getDborm().execSql("delete from book_info");
+        result = DbormManager.getDborm().execSql("delete from book_info");
         assertEquals(true, result);
     }
 

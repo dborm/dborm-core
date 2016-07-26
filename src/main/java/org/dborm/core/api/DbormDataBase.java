@@ -1,6 +1,4 @@
-package org.dborm.core.utils;
-
-import java.sql.Connection;
+package org.dborm.core.api;
 
 /**
  * 数据库连接相关的信息管理接口
@@ -17,7 +15,17 @@ public abstract class DbormDataBase {
      * @author COCHO
      * @time 2013-5-6上午10:46:44
      */
-    public abstract Connection getConnection();
+    public abstract Object getConnection();
+
+
+    /**
+     * 关闭数据库链接
+     *
+     * @param connection 数据库链接
+     */
+    public abstract void closeConnection(Object connection);
+
+
 
     /**
      * 新曾对象操作之前
@@ -87,18 +95,5 @@ public abstract class DbormDataBase {
 
 
 
-    /**
-     * 关闭数据库链接
-     *
-     * @param conn 数据库链接
-     */
-    public void closeConn(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (Exception ignored) {
-            }
-        }
-    }
 
 }

@@ -25,13 +25,13 @@ public class SQLTranslater {
         // 例如： INSERT INTO users(user_Id, username) VALUES (?,?) ;
         String sql;
         StringBuilder sqlContent = new StringBuilder("INSERT INTO ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" (");
         StringBuilder columnNames = new StringBuilder();
         StringBuilder columnValue = new StringBuilder();
 
-        Map<String, Field> fields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, Field> fields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for(String name: fields.keySet()){
             columnNames.append(name);
             columnNames.append(", ");
@@ -56,7 +56,7 @@ public class SQLTranslater {
         // 例如： DELETE FROM users WHERE user_id=?;
         String sql;
         StringBuilder sqlContent = new StringBuilder("DELETE FROM ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" WHERE ");
         sqlContent.append(parsePrimaryKeyWhere(entityClass));
@@ -75,12 +75,12 @@ public class SQLTranslater {
         String sql;
         StringBuilder sqlContent;
         sqlContent = new StringBuilder("UPDATE ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" SET ");
         StringBuilder columnNames = new StringBuilder();
 
-        Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for(String name : columnFields.keySet()){
             columnNames.append(name);
             columnNames.append("=?, ");
@@ -100,7 +100,7 @@ public class SQLTranslater {
      */
     public String parsePrimaryKeyWhere(Class<?> entityClass) {
         StringBuilder sqlContent = new StringBuilder();
-        Map<String, Field> fields = CacheDborm.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
+        Map<String, Field> fields = Cache.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
         for(String name : fields.keySet()){
             sqlContent.append(name);
             sqlContent.append("=? and ");

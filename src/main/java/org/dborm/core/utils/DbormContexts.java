@@ -23,9 +23,4 @@ public class DbormContexts {
      */
     public static String encode = "UTF-8";
 
-    /**
-     * 日志记录工具类
-     */
-    public static DbormLogger log = new DbormLoggerDefault();
-
 }

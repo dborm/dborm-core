@@ -1,7 +1,7 @@
 package org.dborm.core.test.excute;
 
 import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DbormHandler;
+import org.dborm.core.test.utils.db.DbormManager;
 import org.dborm.core.test.utils.domain.BookInfo;
 import org.dborm.core.test.utils.domain.UserInfo;
 import org.junit.After;
@@ -21,37 +21,37 @@ public class RelationListTest extends BaseTest {
 
     @Before
     public void before() {
-        boolean result = DbormHandler.getDborm().insert(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().insert(getRelationUserInfos());
         assertEquals(true, result);
     }
 
     @Test
     public void testRelationUpdate() {
-        boolean result = DbormHandler.getDborm().update(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().update(getRelationUserInfos());
         assertEquals(true, result);
     }
 
     @Test
     public void testRelationDelete() {
-        boolean result = DbormHandler.getDborm().delete(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().delete(getRelationUserInfos());
         assertEquals(true, result);
     }
 
     @Test
     public void testRelationReplace() {
-        boolean result = DbormHandler.getDborm().replace(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().replace(getRelationUserInfos());
         assertEquals(true, result);
     }
 
     @Test
     public void testRelationSaveOrUpdate() {
-        boolean result = DbormHandler.getDborm().saveOrUpdate(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().saveOrUpdate(getRelationUserInfos());
         assertEquals(true, result);
     }
 
     @Test
     public void testRelationSaveOrReplace() {
-        boolean result = DbormHandler.getDborm().saveOrReplace(getRelationUserInfos());
+        boolean result = DbormManager.getDborm().saveOrReplace(getRelationUserInfos());
         assertEquals(true, result);
     }
 

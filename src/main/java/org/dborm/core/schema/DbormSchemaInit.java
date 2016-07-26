@@ -2,7 +2,7 @@ package org.dborm.core.schema;
 
 import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.domain.TableBean;
-import org.dborm.core.utils.LoggerUtilsDborm;
+import org.dborm.core.framework.Cache;
 import org.dborm.core.utils.StringUtilsDborm;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,38 +25,25 @@ import java.util.*;
 public class DbormSchemaInit {
 
     StringUtilsDborm stringUtils = new StringUtilsDborm();
-    LoggerUtilsDborm loggerUtils = new LoggerUtilsDborm();
 
-    private String schemaPath;
 
-    public DbormSchemaInit() {
-    }
-
-    public DbormSchemaInit(String schemaPath) {
-        this.schemaPath = schemaPath;
-    }
-
-    /**
-     * 初始化表结构
-     *
-     * @return 配置信息集合
-     * @throws Exception
-     * @author COCHO
-     * @time 2013-5-23下午3:26:20
-     */
-    public Hashtable<String, TableBean> initSchema() throws Exception {
-        Hashtable<String, TableBean> tables = new Hashtable<String, TableBean>();
-        List<String> schemaFiles = getSchemaFiles();
+    public void initSchema(String schemaBasePath) throws Exception {
+        List<String> schemaFiles = getSchemaFiles(schemaBasePath);
         for (String schemaFile : schemaFiles) {
-            String schemaFilePath = schemaPath + File.separator + schemaFile;
-            tables.putAll(getSchemaByFile(schemaFilePath));
+            String schemaFilePath = schemaBasePath + File.separator + schemaFile;
+            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaFilePath));
         }
-        return tables;
     }
 
-    private List<String> getSchemaFiles() throws Exception {
+    public void initSchema(List<String> schemaFilesPath) throws Exception {
+        for (String schemaFilePath : schemaFilesPath) {
+            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaFilePath));
+        }
+    }
+
+    private List<String> getSchemaFiles(String schemaBasePath) throws Exception {
         List<String> schemaFiles = new ArrayList<String>();
-        URL url = Thread.currentThread().getContextClassLoader().getResource(schemaPath);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(schemaBasePath);
         if (url != null) {
             File file = new File(url.toURI());
             String[] files = file.list();
@@ -69,17 +56,13 @@ public class DbormSchemaInit {
         return schemaFiles;
     }
 
-    private Map<String, TableBean> getSchemaByFile(String schemaFilePath) {
+    private Map<String, TableBean> getSchemaByFile(String schemaFilePath) throws Exception {
         Map<String, TableBean> tables = new HashMap<String, TableBean>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document document = null;
-        try {
-            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(schemaFilePath);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(inputStream);
-        } catch (Exception e) {
-            loggerUtils.error(DbormSchemaInit.class.getName(), e);
-        }
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(schemaFilePath);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        document = builder.parse(inputStream);
         if (document != null) {
             Element root = document.getDocumentElement();// 获得根元素
             NodeList methodList = root.getElementsByTagName(SchemaConstants.TABLE);// 获得名称为method的元素集合
@@ -114,9 +97,9 @@ public class DbormSchemaInit {
     private Map<String, ColumnBean> getColumnDomains(TableBean tableDomain, Element table) {
         Map<String, ColumnBean> fieldList = tableDomain.getColumns();
         NodeList columnList = table.getElementsByTagName(SchemaConstants.COLUMN);
-        for (int j = 0; j < columnList.getLength(); j++) {
+        for (int i = 0; i < columnList.getLength(); i++) {
             ColumnBean columnDomain = new ColumnBean();
-            Element column = (Element) columnList.item(j);
+            Element column = (Element) columnList.item(i);
             String fieldName = getStringMustAttributeValue(column, SchemaConstants.COLUMN_FIELD_NAME);
             columnDomain.setFieldName(fieldName);
             columnDomain.setPrimaryKey(getBooleanAttributeValue(column, SchemaConstants.COLUMN_IS_PRIMARY_KEY));
@@ -152,7 +135,7 @@ public class DbormSchemaInit {
         if (node != null) {
             return node.getNodeValue();
         } else {
-            throw new IllegalArgumentException("The attribute[" + attributeName + "] in " + schemaPath + " can't be null !");
+            throw new IllegalArgumentException("The attribute[" + attributeName + "] in " + node.getNamespaceURI() + " can't be null !");
         }
     }
 
@@ -203,11 +186,4 @@ public class DbormSchemaInit {
         return null;
     }
 
-    public String getSchemaPath() {
-        return schemaPath;
-    }
-
-    public void setSchemaPath(String schemaPath) {
-        this.schemaPath = schemaPath;
-    }
 }

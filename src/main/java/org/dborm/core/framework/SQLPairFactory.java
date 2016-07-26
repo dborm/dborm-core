@@ -1,12 +1,12 @@
 package org.dborm.core.framework;
 
+import org.dborm.core.api.Dborm;
+import org.dborm.core.domain.PairDborm;
 import org.dborm.core.domain.TableBean;
-import org.dborm.core.utils.PairDborm;
 import org.dborm.core.utils.ReflectUtilsDborm;
 import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.util.*;
 
 /**
@@ -19,7 +19,7 @@ public class SQLPairFactory {
 
     private Dborm dborm;
 
-    public SQLPairFactory(Dborm dborm) {
+    public SQLPairFactory(DbormHandler dborm) {
         this.dborm = dborm;
     }
 
@@ -31,10 +31,10 @@ public class SQLPairFactory {
     public <T> PairDborm<String, List> insert(T entity) {
         entity = dborm.getDataBase().beforeInsert(entity);
         Class<?> entityClass = entity.getClass();
-        String sql = CacheDborm.getCache().getSqlCache(entityClass.getName() + ".INSERT");
+        String sql = Cache.getCache().getSqlCache(entityClass.getName() + ".INSERT");
         if (stringUtils.isEmpty(sql)) {// 如果缓存中取不到已解析的SQL
             sql = sqlTranslater.getInsertSql(entityClass);
-            CacheDborm.getCache().putSqlCache(entityClass.getName() + ".INSERT", sql);
+            Cache.getCache().putSqlCache(entityClass.getName() + ".INSERT", sql);
         }
         List bindArgs = entityResolver.getColumnFiledValuesUseDefault(entity);
         return PairDborm.create(sql, bindArgs);
@@ -50,10 +50,10 @@ public class SQLPairFactory {
     public <T> PairDborm<String, List> replace(T entity) {
         entity = dborm.getDataBase().beforeReplace(entity);
         Class<?> entityClass = entity.getClass();
-        String sql = CacheDborm.getCache().getSqlCache(entityClass.getName() + ".REPLACE");
+        String sql = Cache.getCache().getSqlCache(entityClass.getName() + ".REPLACE");
         if (stringUtils.isEmpty(sql)) {// 如果缓存中取不到已解析的SQL
             sql = sqlTranslater.getReplaceSql(entityClass);
-            CacheDborm.getCache().putSqlCache(entityClass.getName() + ".REPLACE", sql);
+            Cache.getCache().putSqlCache(entityClass.getName() + ".REPLACE", sql);
         }
         List bindArgs = entityResolver.getColumnFiledValues(entity);
         bindArgs.addAll(entityResolver.getPrimaryKeyFiledValues(entity));
@@ -70,10 +70,10 @@ public class SQLPairFactory {
     public <T> PairDborm<String, List> delete(T entity) {
         entity = dborm.getDataBase().beforeDelete(entity);
         Class<?> entityClass = entity.getClass();
-        String sql = CacheDborm.getCache().getSqlCache(entityClass.getName() + ".DELETE");
+        String sql = Cache.getCache().getSqlCache(entityClass.getName() + ".DELETE");
         if (stringUtils.isEmpty(sql)) {// 如果缓存中取不到已解析的SQL
             sql = sqlTranslater.getDeleteSql(entityClass);
-            CacheDborm.getCache().putSqlCache(entityClass.getName() + ".DELETE", sql);
+            Cache.getCache().putSqlCache(entityClass.getName() + ".DELETE", sql);
         }
         List bindArgs = entityResolver.getPrimaryKeyFiledValues(entity);
         return PairDborm.create(sql, bindArgs);
@@ -90,13 +90,13 @@ public class SQLPairFactory {
         entity = dborm.getDataBase().beforeUpdate(entity);
         Class<?> entityClass = entity.getClass();
         StringBuilder sqlContent = new StringBuilder("UPDATE ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" SET ");
         StringBuilder columnName = new StringBuilder();
         List bindArgs = new ArrayList();
 
-        Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for (String name : columnFields.keySet()) {
             Field field = columnFields.get(name);
             Object value = reflectUtils.getFieldValue(field, entity);
@@ -120,36 +120,36 @@ public class SQLPairFactory {
         return pairList;
     }
 
-    public <T> List<PairDborm<String, List>> saveOrReplaceDeep(T entity, Connection conn) {
+    public <T> List<PairDborm<String, List>> saveOrReplaceDeep(T entity, Object connection) {
         entity = dborm.getDataBase().beforeSaveOrReplace(entity);
 
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
-        if (dborm.isExist(entity, conn)) {
+        if (dborm.isExist(entity, connection)) {
             pairList.add(replace(entity));
         } else {
             pairList.add(insert(entity));
         }
-        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_REPLACE, conn));
+        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_REPLACE, connection));
         return pairList;
     }
 
-    public <T> List<PairDborm<String, List>> saveOrUpdateDeep(T entity, Connection conn) {
+    public <T> List<PairDborm<String, List>> saveOrUpdateDeep(T entity, Object connection) {
         entity = dborm.getDataBase().beforeSaveOrUpdate(entity);
 
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
-        if (dborm.isExist(entity, conn)) {
+        if (dborm.isExist(entity, connection)) {
             pairList.add(update(entity));
         } else {
             pairList.add(insert(entity));
         }
-        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_UPDATE, conn));
+        pairList.addAll(getRelationPair(entity, PairType.SAVE_OR_UPDATE, connection));
         return pairList;
     }
 
     public PairDborm<String, List> getEntityCount(Class<?> entityClass) {
         // 例如： SELECT COUNT(*) FROM
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sql.append(tableName);
         return PairDborm.create(sql.toString(), null);
     }
@@ -160,7 +160,7 @@ public class SQLPairFactory {
             // 例如： SELECT COUNT(*) FROM users WHERE user_id=?
             StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ");
             Class<?> entityClass = entity.getClass();
-            String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+            String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
             sql.append(tableName);
             sql.append(" WHERE ");
             sql.append(sqlTranslater.parsePrimaryKeyWhere(entityClass));
@@ -173,13 +173,13 @@ public class SQLPairFactory {
     public <T> PairDborm<String, List> getEntitiesByExample(T entity, boolean isAnd) {
         Class<?> entityClass = entity.getClass();
         StringBuilder sqlContent = new StringBuilder("SELECT * FROM ");
-        String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
+        String tableName = Cache.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" WHERE 1=1 ");
         StringBuilder columnNames = new StringBuilder();
         List bindArgs = new ArrayList();
 
-        Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for (String name : columnFields.keySet()) {
             Field field = columnFields.get(name);
             Object value = reflectUtils.getFieldValue(field, entity);
@@ -211,15 +211,15 @@ public class SQLPairFactory {
      *
      * @param entity 对象
      * @param type   操作类型
-     * @param conn   数据库连接
+     * @param connection   数据库连接
      * @return SQL操作集合
      * @author COCHO
      * @time 2013-6-5下午1:55:14
      */
-    private <T> List<PairDborm<String, List>> getRelationPair(T entity, PairType type, Connection conn) {
+    private <T> List<PairDborm<String, List>> getRelationPair(T entity, PairType type, Object connection) {
         List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
         Class<?> entityClass = entity.getClass();
-        TableBean table = CacheDborm.getCache().getTablesCache(entityClass);
+        TableBean table = Cache.getCache().getTablesCache(entityClass);
         Set<String> relations = table.getRelation();
         if (relations.size() > 0) {
             for (String fieldName : relations) {
@@ -229,10 +229,10 @@ public class SQLPairFactory {
                     if (relationObj instanceof Collection) {
                         List relationObjList = (List) reflectUtils.getFieldValue(relationField, entity);
                         for (Object obj : relationObjList) {
-                            relation(pairList, obj, type, conn);
+                            relation(pairList, obj, type, connection);
                         }
                     } else {
-                        relation(pairList, relationObj, type, conn);
+                        relation(pairList, relationObj, type, connection);
                     }
                 }
             }
@@ -241,7 +241,7 @@ public class SQLPairFactory {
     }
 
 
-    private void relation(List<PairDborm<String, List>> pairList, Object relationObj, PairType type, Connection conn) {
+    private void relation(List<PairDborm<String, List>> pairList, Object relationObj, PairType type, Object connection) {
         switch (type) {
             case INSERT:
                 pairList.addAll(insertDeep(relationObj));
@@ -256,10 +256,10 @@ public class SQLPairFactory {
                 pairList.addAll(updateDeep(relationObj));
                 break;
             case SAVE_OR_REPLACE:
-                pairList.addAll(saveOrReplaceDeep(relationObj, conn));
+                pairList.addAll(saveOrReplaceDeep(relationObj, connection));
                 break;
             case SAVE_OR_UPDATE:
-                pairList.addAll(saveOrUpdateDeep(relationObj, conn));
+                pairList.addAll(saveOrUpdateDeep(relationObj, connection));
                 break;
             default:
                 break;

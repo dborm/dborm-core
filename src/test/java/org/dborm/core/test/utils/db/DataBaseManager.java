@@ -1,9 +1,10 @@
 package org.dborm.core.test.utils.db;
 
-import org.dborm.core.utils.DbormDataBase;
+import org.dborm.core.api.DbormDataBase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DataBaseManager extends DbormDataBase {
 
@@ -15,8 +16,19 @@ public class DataBaseManager extends DbormDataBase {
      * @author COCHO
      */
     @Override
-    public Connection getConnection() {
+    public Object getConnection() {
         return createConnection();
+    }
+
+    public void closeConnection(Object connection) {
+        if(connection != null){
+            Connection con = (Connection) connection;
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -44,8 +56,4 @@ public class DataBaseManager extends DbormDataBase {
         return conn;
     }
 
-    @Override
-    public <T> T beforeInsert(T entity) {
-        return super.beforeInsert(entity);
-    }
 }

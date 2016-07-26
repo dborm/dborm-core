@@ -2,7 +2,7 @@ package org.dborm.core.test.query;
 
 import org.dborm.core.domain.BaseDomain;
 import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DbormHandler;
+import org.dborm.core.test.utils.db.DbormManager;
 import org.dborm.core.test.utils.domain.BookInfo;
 import org.dborm.core.test.utils.domain.SelectModel;
 import org.dborm.core.test.utils.domain.UserInfo;
@@ -25,10 +25,10 @@ public class SelectJoinTest extends BaseTest {
     @BeforeClass
     public static void before() {
         UserInfo userInfo = getUserInfo();
-        DbormHandler.getDborm().insert(userInfo);
+        DbormManager.getDborm().insert(userInfo);
         BookInfo bookInfo = getBookInfo();
         bookInfo.setUserId(userInfo.getId());
-        DbormHandler.getDborm().insert(bookInfo);
+        DbormManager.getDborm().insert(bookInfo);
     }
 
 
@@ -39,7 +39,7 @@ public class SelectJoinTest extends BaseTest {
     @Test
     public void testUseBaseDomain() {
         String sql = "select * from book_info";
-        BaseDomain baseDomain = DbormHandler.getDborm().getEntity(BaseDomain.class, sql);
+        BaseDomain baseDomain = DbormManager.getDborm().getEntity(BaseDomain.class, sql);
         assertEquals(BOOK_ID, baseDomain.getParam("id"));//可以将查询结果封装在BaseDomain中,然后通过属性名称获取
         assertEquals(USER_ID, baseDomain.getParam("userId"));//如列为user_id,取值的时候需要使用userId(自动将下划线格式转换为驼峰格式)
     }
@@ -53,7 +53,7 @@ public class SelectJoinTest extends BaseTest {
     @Test
     public void testWithBaseDomain() {
         String sql = "select book.id, book.user_id, user.nickname from book_info book left join user_info user on book.user_id = user.id";
-        BookInfo bookInfo = DbormHandler.getDborm().getEntity(BookInfo.class, sql);
+        BookInfo bookInfo = DbormManager.getDborm().getEntity(BookInfo.class, sql);
         assertEquals(BOOK_ID, bookInfo.getId());
         assertEquals(USER_ID, bookInfo.getUserId());//如列为user_id,取值的时候需要使用userId(自动将下划线格式转换为驼峰格式)
         assertEquals(USER_NICKNAME, bookInfo.getParam("nickname"));//如果查询结果中有某一列的值,但是接受结果的类中没有该属性,则该值将会存储到param中
@@ -74,7 +74,7 @@ public class SelectJoinTest extends BaseTest {
                接受查询结果的对象中有一个属性名为id的属性,则接收的id的值是book_info表的值
          */
         String sql = "SELECT u.*, b.id as book_id, b.name as book_name FROM user_info u left join book_info b on u.id = b.user_id";
-        List<SelectModel> selectModels = DbormHandler.getDborm().getEntities(SelectModel.class, sql);
+        List<SelectModel> selectModels = DbormManager.getDborm().getEntities(SelectModel.class, sql);
         assertNotNull(selectModels.get(0));
         for (SelectModel selectModel : selectModels) {
             assertEquals(USER_NICKNAME, selectModels.get(0).getNickname());
@@ -91,7 +91,7 @@ public class SelectJoinTest extends BaseTest {
     @Test
     public void testSelectTeam() {
         String sql = "SELECT u.*, b.* FROM user_info u left join book_info b on u.id = b.user_id";
-        List<Map<String, Object>> entityList = DbormHandler.getDborm().getEntities(new Class<?>[]{UserInfo.class, BookInfo.class}, sql);
+        List<Map<String, Object>> entityList = DbormManager.getDborm().getEntities(new Class<?>[]{UserInfo.class, BookInfo.class}, sql);
         for (int i = 0; i < entityList.size(); i++) {
             Map<String, Object> entityTeam = entityList.get(i);
             UserInfo user = (UserInfo) entityTeam.get(UserInfo.class.getName());

@@ -1,19 +1,20 @@
 package org.dborm.core.test.utils.db;
 
-import org.dborm.core.framework.Dborm;
+import org.dborm.core.api.Dborm;
+import org.dborm.core.framework.DbormHandler;
 
 /**
  * Created by shk
  * 16/4/20 下午2:09
  */
-public class DbormHandler {
+public class DbormManager {
 
 
     private static Dborm dborm;
 
     public static synchronized Dborm getDborm() {
         if (dborm == null) {
-            dborm = new Dborm(new DataBaseManager());
+            dborm = new DbormHandler(new DataBaseManager());
         }
         return dborm;
     }

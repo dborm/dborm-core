@@ -1,4 +1,4 @@
-package org.dborm.core.utils;
+package org.dborm.core.domain;
 
 
 /*

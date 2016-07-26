@@ -4,13 +4,15 @@ import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.domain.QueryResult;
 import org.dborm.core.schema.SchemaConstants;
 import org.dborm.core.utils.DbormConstants;
-import org.dborm.core.utils.DbormContexts;
 import org.dborm.core.utils.ReflectUtilsDborm;
 import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 实体解析器
@@ -50,8 +52,8 @@ public class EntityResolver {
      */
     public Map<String, Field> getEntityColumnFields(Class<?> entityClass) {
         Map<String, Field> columnFields = new HashMap<String, Field>();
-        Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
-        Map<String, Field> allFields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);
+        Map<String, ColumnBean> columns = Cache.getCache().getTablesCache(entityClass).getColumns();
+        Map<String, Field> allFields = Cache.getCache().getEntityAllFieldsCache(entityClass);
         for (String columnName : allFields.keySet()) {
             Field field = allFields.get(columnName);
             if (columns.containsKey(columnName)) {// 如果表的列属性信息中包含该属性，则说明该属性属为列属性
@@ -71,7 +73,7 @@ public class EntityResolver {
      */
     public Map<String, Field> getEntityPrimaryKeyFields(Class<?> entityClass) {
         Map<String, Field> primaryKeys = new HashMap<String, Field>();
-        Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
+        Map<String, ColumnBean> columns = Cache.getCache().getTablesCache(entityClass).getColumns();
         for (String columnName : columns.keySet()) {
             ColumnBean column = columns.get(columnName);
             if (column.isPrimaryKey()) {
@@ -90,7 +92,7 @@ public class EntityResolver {
      * @return 实体对象
      */
     public Object getEntity(Class<?> entityClass, QueryResult queryResult) throws Exception {
-        Map<String, Field> fields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
+        Map<String, Field> fields = Cache.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
         for (String columnName : queryResult.getResultMap().keySet()) {
             Field field = fields.get(columnName);
@@ -110,7 +112,7 @@ public class EntityResolver {
      * @return 实体类对应的对象
      */
     public Object getEntityAll(Class<?> entityClass, QueryResult queryResult) throws Exception {
-        Map<String, Field> fields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
+        Map<String, Field> fields = Cache.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
         Method putParam = null;
         for (String columnName : queryResult.getResultMap().keySet()) {
@@ -142,7 +144,7 @@ public class EntityResolver {
     public <T> List<Object> getColumnFiledValues(T entity) {
         Class<?> entityClass = entity.getClass();
         List<Object> fieldValues = new ArrayList<Object>();
-        Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for (Field field : columnFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
             fieldValues.add(value);
@@ -162,8 +164,8 @@ public class EntityResolver {
     public <T> List<Object> getColumnFiledValuesUseDefault(T entity) {
         Class<?> entityClass = entity.getClass();
         List<Object> fieldValues = new ArrayList<Object>();
-        Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
-        Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
+        Map<String, ColumnBean> columns = Cache.getCache().getTablesCache(entityClass).getColumns();
+        Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for (String columnName : columnFields.keySet()) {
             Field field = columnFields.get(columnName);
             Object value = reflectUtils.getFieldValue(field, entity);
@@ -190,18 +192,14 @@ public class EntityResolver {
     public <T> List<Object> getPrimaryKeyFiledValues(T entity) {
         List<Object> primaryKeyValues = new ArrayList<Object>();
         Class<?> entityClass = entity.getClass();
-        Map<String, Field> primaryKeyFields = CacheDborm.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
+        Map<String, Field> primaryKeyFields = Cache.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
         for (Field field : primaryKeyFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
             if (value != null) {
                 primaryKeyValues.add(value);
             } else {
                 String warnMessage = "警告: 属性(" + field.getName() + ") 在类(" + entityClass.getName() + ")里面是主键，不能为空!";
-                if (DbormContexts.log != null) {
-                    DbormContexts.log.debug(warnMessage);
-                } else {
-                    System.out.println(warnMessage);
-                }
+                System.out.println(warnMessage);//此处不需要抛出异常,否则自动填充主键值的功能将会失效
             }
         }
         return primaryKeyValues;

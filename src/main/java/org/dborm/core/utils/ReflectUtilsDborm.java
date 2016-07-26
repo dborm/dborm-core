@@ -1,5 +1,7 @@
 package org.dborm.core.utils;
 
+import org.dborm.core.api.DbormLogger;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 public class ReflectUtilsDborm {
 
-    LoggerUtilsDborm loggerUtils = new LoggerUtilsDborm();
+    private DbormLogger logger;
 
     /**
      * 获得实体类的所有属性（该方法递归的获取当前类及父类中声明的字段。最终结果以list形式返回）
@@ -70,7 +72,7 @@ public class ReflectUtilsDborm {
      * @author COCHO
      * @time 2013-5-6上午11:45:43
      */
-    public Object getFieldValue(Field field, Object entity) {
+    public Object getFieldValue(Field field, Object entity) throws RuntimeException {
         if (field == null || entity == null) {
             return null;
         }
@@ -81,9 +83,8 @@ public class ReflectUtilsDborm {
             field.setAccessible(true);
             return field.get(entity);// 获取字段的值
         } catch (Exception e) {
-            loggerUtils.error("Can't get field (" + field.getName() + ") value from object (" + entity + ") by reflect!", e);
+            throw new RuntimeException("Can't get field (" + field.getName() + ") value from object (" + entity + ") by reflect!", e);
         }
-        return null;
     }
 
     /**
@@ -96,19 +97,13 @@ public class ReflectUtilsDborm {
      * @author COCHO
      * @time 2013-5-6上午11:46:54
      */
-    public boolean setFieldValue(Field field, Object entity, Object value) {
-        if (field == null || entity == null) {
-            return false;
-        }
-
+    public void setFieldValue(Field field, Object entity, Object value) throws RuntimeException {
         try {
             field.setAccessible(true);
             field.set(entity, value);
-            return true;
         } catch (Exception e) {
-            loggerUtils.error("Can't set value（" + value + "） to instance（" + entity.getClass().getName() + "） field（" + field.getName() + "）  by reflect!", e);
+            throw new RuntimeException("Can't set value（" + value + "） to instance（" + entity.getClass().getName() + "） field（" + field.getName() + "）  by reflect!", e);
         }
-        return false;
     }
 
     /**
@@ -119,13 +114,13 @@ public class ReflectUtilsDborm {
      * @param parameterTypes 函数入参类型
      * @return 函数对象或者null（反射出现异常时也会返回null）
      */
-    public Method getMethod(Object entity, String methodName, Class<?>... parameterTypes) {
+    public Method getMethod(Object entity, String methodName, Class<?>... parameterTypes) throws RuntimeException {
         if (entity != null) {
             Class clazz = entity.getClass();
             try {
                 return clazz.getMethod(methodName, parameterTypes);
             } catch (Exception e) {
-                loggerUtils.error("Can't get Method by into parameterTypes（" + parameterTypes + "） from instance（" + entity.getClass().getName() + "） method（" + methodName + "）  by reflect!", e);
+                throw new RuntimeException("Can't get Method by into parameterTypes（" + parameterTypes + "） from instance（" + entity.getClass().getName() + "） method（" + methodName + "）  by reflect!", e);
             }
         }
         return null;
@@ -139,13 +134,13 @@ public class ReflectUtilsDborm {
      * @param args   入参
      * @return true：设置成功，false：设置失败
      */
-    public boolean setMethodValue(Object entity, Method method, Object... args) {
+    public boolean setMethodValue(Object entity, Method method, Object... args) throws RuntimeException {
         if (method != null) {
             try {
                 method.invoke(entity, args);
                 return true;
             } catch (Exception e) {
-                loggerUtils.error("Can't set value（" + args + "） to instance（" + entity.getClass().getName() + "） method（" + method.getName() + "）  by reflect!", e);
+                throw new RuntimeException("Can't set value（" + args + "） to instance（" + entity.getClass().getName() + "） method（" + method.getName() + "）  by reflect!", e);
             }
         }
         return false;
@@ -159,13 +154,13 @@ public class ReflectUtilsDborm {
      * @param args   入参
      * @return 函数的返回值或者null（反射出现异常时也会返回null）
      */
-    public Object getMethodValue(Object entity, Method method, Object... args) {
+    public Object getMethodValue(Object entity, Method method, Object... args) throws RuntimeException {
         if (entity != null) {
             Class clazz = entity.getClass();
             try {
                 return method.invoke(entity, args);
             } catch (Exception e) {
-                loggerUtils.error("Can't get value by into value（" + args + "） from instance（" + entity.getClass().getName() + "） method（" + method.getName() + "）  by reflect!", e);
+                throw new RuntimeException("Can't get value by into value（" + args + "） from instance（" + entity.getClass().getName() + "） method（" + method.getName() + "）  by reflect!", e);
             }
         }
         return null;
@@ -179,7 +174,7 @@ public class ReflectUtilsDborm {
      * @author COCHO
      * @time 2013-5-6上午11:48:07
      */
-    public Object createInstance(Class<?> entityClass) {
+    public Object createInstance(Class<?> entityClass) throws RuntimeException {
         if (entityClass == null) {
             throw new IllegalArgumentException("Object class mustn't be null");
         }
@@ -187,9 +182,8 @@ public class ReflectUtilsDborm {
         try {
             return entityClass.newInstance();
         } catch (Exception e) {
-            loggerUtils.error("Can't create instance（" + entityClass.getName() + "）  by reflect!", e);
+            throw new RuntimeException("Can't create instance（" + entityClass.getName() + "）  by reflect!", e);
         }
-        return null;
     }
 
 }

@@ -14,15 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author COCHO
  * @time 2013-5-6上午10:37:50
  */
-public class CacheDborm {
+public class Cache {
 
 
-    private static CacheDborm cache;
+    private static Cache cache;
     EntityResolver entityResolver = new EntityResolver();
 
-    public static synchronized CacheDborm getCache() {
+    public static synchronized Cache getCache() {
         if (cache == null) {
-            cache = new CacheDborm();
+            cache = new Cache();
         }
         return cache;
     }

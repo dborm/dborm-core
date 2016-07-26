@@ -1,7 +1,7 @@
 package org.dborm.core.test.excute;
 
 import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DbormHandler;
+import org.dborm.core.test.utils.db.DbormManager;
 import org.dborm.core.test.utils.domain.UserInfo;
 import org.junit.After;
 import org.junit.Before;
@@ -22,12 +22,12 @@ public class TransactionTest extends BaseTest {
     @Test
     public void testTransactionSuccess() {
         UserInfo user = getUserInfo();
-        DbormHandler.getDborm().beginTransaction();
-        DbormHandler.getDborm().insert(user);
+        DbormManager.getDborm().beginTransaction();
+        DbormManager.getDborm().insert(user);
 
         user.setName("Jack");
-        DbormHandler.getDborm().update(user);
-        boolean result = DbormHandler.getDborm().commit();
+        DbormManager.getDborm().update(user);
+        boolean result = DbormManager.getDborm().commit();
         assertEquals(true, result);
     }
 

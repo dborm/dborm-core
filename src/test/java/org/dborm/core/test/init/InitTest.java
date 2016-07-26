@@ -1,10 +1,10 @@
 package org.dborm.core.test.init;
 
-import org.dborm.core.framework.Dborm;
+import org.dborm.core.api.Dborm;
+import org.dborm.core.framework.DbormHandler;
 import org.dborm.core.test.utils.db.DataBaseManager;
 import org.dborm.core.test.utils.domain.UserInfo;
 import org.dborm.core.utils.DbormContexts;
-import org.dborm.core.utils.DbormLoggerDefault;
 import org.junit.Test;
 
 import java.util.Date;
@@ -32,12 +32,11 @@ public class InitTest {
 
     private void initDbormContexts() {
         DbormContexts.showSql = true;
-        DbormContexts.log = new DbormLoggerDefault();
     }
 
     private void initDborm() {
         try {
-            dborm = new Dborm(new DataBaseManager(), new DbormLoggerDefault());
+            dborm = new DbormHandler(new DataBaseManager());
         } catch (Exception e) {
             e.printStackTrace();
         }
