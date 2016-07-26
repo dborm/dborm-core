@@ -31,6 +31,13 @@ public class DbormHandler implements Dborm {
         this.sqlExecutor = new SQLExecutorHandler(this.logger);
     }
 
+    public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor) {
+        this.logger = new DbormLoggerHandler();
+        this.dataBase = dataBase;
+        this.sqlExecutor = sqlExecutor;
+    }
+
+
     public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor, DbormLogger logger, boolean showSql) {
         this.dataBase = dataBase;
         this.sqlExecutor = sqlExecutor;
@@ -427,19 +434,6 @@ public class DbormHandler implements Dborm {
         }
         return count;
     }
-
-    @Override
-    public boolean execSql(String sql) {
-        boolean result = false;
-        if (stringUtils.isNotBlank(sql)) {
-            List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
-            List bindArgs = new ArrayList();
-            pairList.add(PairDborm.create(sql, bindArgs));
-            result = execSqlByTransaction(pairList);
-        }
-        return result;
-    }
-
 
     @Override
     public boolean execSql(String sql, Object... bindArgs) {

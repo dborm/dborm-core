@@ -380,16 +380,6 @@ public interface Dborm {
     /**
      * 执行SQL
      *
-     * @param sql sql语句
-     * @return true:执行成功 false:执行失败或空的参数
-     * @author COCHO
-     */
-    boolean execSql(String sql);
-
-
-    /**
-     * 执行SQL
-     *
      * @param sql      SQL语句
      * @param bindArgs SQL语句所需的参数（该参数允许为null）
      * @return true:执行成功 false:执行失败或空的参数

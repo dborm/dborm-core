@@ -30,7 +30,7 @@ public class DbormSchemaInit {
     /**
      * 初始化描述文件
      *
-     * @param schemaBasePath 描述文件所在的基础路径（将会扫描该路径下的所有子文件）
+     * @param schemaBasePath 描述文件所在的基础路径（将会扫描该路径下的所有文件,不会扫描子目录）
      * @throws Exception
      */
     public void initSchema(String schemaBasePath) throws Exception {
@@ -45,13 +45,11 @@ public class DbormSchemaInit {
     /**
      * 通过描述文件初始化（该函数用于Android端等环境使用）
      *
-     * @param schemasInputStream 描述文件的输入流
+     * @param schemaInputStream 描述文件的输入流
      * @throws Exception
      */
-    public void initSchema(List<InputStream> schemasInputStream) throws Exception {
-        for (InputStream schemaInputStream : schemasInputStream) {
-            Cache.getCache().putAllTablesCache(getSchemaByFile(schemaInputStream));
-        }
+    public void initSchema(InputStream schemaInputStream) throws Exception {
+        Cache.getCache().putAllTablesCache(getSchemaByFile(schemaInputStream));
     }
 
     private List<String> getSchemaFiles(String schemaBasePath) throws Exception {
