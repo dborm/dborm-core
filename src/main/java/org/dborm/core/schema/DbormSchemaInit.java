@@ -43,7 +43,7 @@ public class DbormSchemaInit {
     }
 
     /**
-     * 通过描述文件初始化（该接口用于Android端等环境使用）
+     * 通过描述文件初始化（该函数用于Android端等环境使用）
      *
      * @param schemasInputStream 描述文件的输入流
      * @throws Exception
