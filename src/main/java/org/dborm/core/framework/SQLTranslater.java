@@ -4,8 +4,6 @@ import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * SQL转换器（根据实体对象转换出相应的SQL）
@@ -30,17 +28,16 @@ public class SQLTranslater {
         String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" (");
-        StringBuilder columnName = new StringBuilder();
+        StringBuilder columnNames = new StringBuilder();
         StringBuilder columnValue = new StringBuilder();
 
         Map<String, Field> fields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = fields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            columnName.append(entry.getKey());
-            columnName.append(", ");
+        for(String name: fields.keySet()){
+            columnNames.append(name);
+            columnNames.append(", ");
             columnValue.append("?, ");
         }
-        sqlContent.append(stringUtils.cutLastSign(columnName.toString(), ", "));
+        sqlContent.append(stringUtils.cutLastSign(columnNames.toString(), ", "));
         sqlContent.append(") VALUES (");
         sqlContent.append(stringUtils.cutLastSign(columnValue.toString(), ", "));
         sqlContent.append(")");
@@ -81,15 +78,14 @@ public class SQLTranslater {
         String tableName = CacheDborm.getCache().getTablesCache(entityClass).getTableName();
         sqlContent.append(tableName);
         sqlContent.append(" SET ");
-        StringBuilder columnName = new StringBuilder();
+        StringBuilder columnNames = new StringBuilder();
 
         Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = columnFields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            columnName.append(entry.getKey());
-            columnName.append("=?, ");
+        for(String name : columnFields.keySet()){
+            columnNames.append(name);
+            columnNames.append("=?, ");
         }
-        sqlContent.append(stringUtils.cutLastSign(columnName.toString(), ", "));
+        sqlContent.append(stringUtils.cutLastSign(columnNames.toString(), ", "));
         sqlContent.append(" WHERE ");
         sqlContent.append(parsePrimaryKeyWhere(entityClass));
         sql = sqlContent.toString();
@@ -105,11 +101,9 @@ public class SQLTranslater {
     public String parsePrimaryKeyWhere(Class<?> entityClass) {
         StringBuilder sqlContent = new StringBuilder();
         Map<String, Field> fields = CacheDborm.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = fields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            sqlContent.append(entry.getKey());
+        for(String name : fields.keySet()){
+            sqlContent.append(name);
             sqlContent.append("=? and ");
-
         }
         return stringUtils.cutLastSign(sqlContent.toString(), "and ");
     }

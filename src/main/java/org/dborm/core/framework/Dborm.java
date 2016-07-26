@@ -1,11 +1,9 @@
 package org.dborm.core.framework;
 
+import org.dborm.core.domain.QueryResult;
 import org.dborm.core.utils.*;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -449,20 +447,14 @@ public class Dborm {
     public <T> List<T> getEntities(Class<?> entityClass, Connection conn, String sql, List bindArgs) {
         List<T> results = new ArrayList<T>();
         if (stringUtils.isNotBlank(sql) && entityClass != null && conn != null) {
-            ResultSet rs = null;
             try {
-                rs = sqlExecutor.getResultSet(sql, bindArgs, conn);
-                if (rs != null) {
-                    String[] columnNames = getColumnNames(rs);
-                    while (rs.next()) {
-                        Object entity = entityResolver.getEntityAll(entityClass, rs, columnNames);
-                        results.add((T) entity);
-                    }
+                List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, conn);
+                for (QueryResult queryResult : queryResults) {
+                    Object entity = entityResolver.getEntityAll(entityClass, queryResult);
+                    results.add((T) entity);
                 }
             } catch (Exception e) {
                 loggerUtils.error(e);
-            } finally {
-                closeRs(rs);
             }
         }
         return results;
@@ -497,26 +489,20 @@ public class Dborm {
     public List<Map<String, Object>> getEntities(Class<?>[] entityClasses, String sql, List bindArgs) {
         List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
         if (stringUtils.isNotBlank(sql) && entityClasses != null && entityClasses.length > 0) {
-            Connection conn = getConnection();
+            Connection conn = getConnection(); //TODO 连接未关闭
             if (conn != null) {
-                ResultSet rs = null;
                 try {
-                    rs = sqlExecutor.getResultSet(sql, bindArgs, conn);
-                    if (rs != null) {
-                        String[] columnNames = getColumnNames(rs);
-                        while (rs.next()) {// 遍历每一行记录
-                            Map<String, Object> entityTeam = new HashMap<String, Object>();// 实体组
-                            for (Class<?> entityClass : entityClasses) {// 对每一个对象实例化
-                                Object entity = entityResolver.getEntity(entityClass, rs, columnNames);
-                                entityTeam.put(entityClass.getName(), entity);
-                            }
-                            results.add(entityTeam);
+                    List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, conn);
+                    for (QueryResult queryResult : queryResults) {
+                        Map<String, Object> entityTeam = new HashMap<String, Object>();// 实体组
+                        for (Class<?> entityClass : entityClasses) {// 对每一个对象实例化
+                            Object entity = entityResolver.getEntity(entityClass, queryResult);
+                            entityTeam.put(entityClass.getName(), entity);
                         }
+                        results.add(entityTeam);
                     }
                 } catch (Exception e) {
                     loggerUtils.error(e);
-                } finally {
-                    closeRs(rs);
                 }
             }
         }
@@ -629,16 +615,13 @@ public class Dborm {
         if (entity != null) {
             PairDborm<String, List> pair = sqlPairFactory.getCountByPrimaryKey(entity);
             if (pair != null) {
-                ResultSet rs = null;
                 try {
-                    rs = sqlExecutor.getResultSet(pair.first, pair.second, conn);
-                    if (rs != null && rs.next() && rs.getInt(1) > 0) {// rs.moveToNext()一定要走
+                    List<QueryResult> queryResults = sqlExecutor.query(pair.first, pair.second, conn);
+                    if ((Long) queryResults.get(0).getObject(0) > 0) {
                         result = true;
                     }
                 } catch (Exception e) {
                     loggerUtils.error(e);
-                } finally {
-                    closeRs(rs);
                 }
             }
         }
@@ -653,23 +636,18 @@ public class Dborm {
      * @author COCHO
      * @time 2013-6-6下午5:23:13
      */
-    public int getEntityCount(Class<?> entityClass) {
-        int count = 0;
+    public long getEntityCount(Class<?> entityClass) {
+        long count = 0;
         if (entityClass != null) {
             Connection conn = getConnection();
             if (conn != null) {
-                ResultSet rs = null;
+                PairDborm<String, List> pair = sqlPairFactory.getEntityCount(entityClass);
                 try {
-                    PairDborm<String, List> pair = sqlPairFactory.getEntityCount(entityClass);
-                    rs = sqlExecutor.getResultSet(pair.first, pair.second, conn);
-                    if (rs != null) {
-                        rs.next();
-                        count = rs.getInt(1);
-                    }
+                    List<QueryResult> queryResults = sqlExecutor.query(pair.first, pair.second, conn);
+                    count = (Long) queryResults.get(0).getObject(0);
                 } catch (Exception e) {
                     loggerUtils.error(e);
                 } finally {
-                    closeRs(rs);
                     dataBase.closeConn(conn);
                 }
             }
@@ -686,7 +664,7 @@ public class Dborm {
      * @author COCHO
      * @time 2013-5-15上午11:32:30
      */
-    public int getCount(String sql, Object... bindArgs) {
+    public long getCount(String sql, Object... bindArgs) {
         return getCount(sql, toList(bindArgs));
     }
 
@@ -697,20 +675,17 @@ public class Dborm {
      * @param bindArgs SQL语句所需参数（该参数允许为null）
      * @return 行数
      */
-    public int getCount(String sql, List bindArgs) {
-        int count = 0;
+    public long getCount(String sql, List bindArgs) {
+        long count = 0;
         if (stringUtils.isNotBlank(sql)) {
             Connection conn = getConnection();
             if (conn != null) {
-                ResultSet rs = null;
                 try {
-                    rs = sqlExecutor.getResultSet(sql, bindArgs, conn);
-                    rs.next();
-                    count = rs.getInt(1);
+                    List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, conn);
+                    count = (Long) queryResults.get(0).getObject(0);
                 } catch (Exception e) {
                     loggerUtils.error(e);
                 } finally {
-                    closeRs(rs);
                     dataBase.closeConn(conn);
                 }
             }
@@ -871,38 +846,11 @@ public class Dborm {
         return result;
     }
 
-    private String[] getColumnNames(ResultSet rs) throws SQLException {
-        ResultSetMetaData resultSetMetaData = rs.getMetaData();
-        int count = resultSetMetaData.getColumnCount();
-        String[] columnNames = new String[count];
-        for (int i = 0; i < count; i++) {
-            columnNames[i] = resultSetMetaData.getColumnLabel(i + 1);//取别名
-        }
-        return columnNames;
-    }
-
-
-    private void closeRs(ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (Exception ignored) {
-            }
-        }
-    }
 
     private <T> Collection<T> toEntityCollection(T entity) {
         Collection<T> entitys = new ArrayList<T>();
         entitys.add(entity);
         return entitys;
-    }
-
-    private Collection toCollection(Object... bindArgs) {
-        Collection result = new ArrayList();
-        if (bindArgs != null) {
-            result = Arrays.asList(bindArgs);
-        }
-        return result;
     }
 
     private List toList(Object... bindArgs) {

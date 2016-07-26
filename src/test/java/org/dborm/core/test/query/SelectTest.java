@@ -1,5 +1,6 @@
 package org.dborm.core.test.query;
 
+import org.dborm.core.domain.QueryResult;
 import org.dborm.core.framework.SQLExecutor;
 import org.dborm.core.test.utils.BaseTest;
 import org.dborm.core.test.utils.db.DbormHandler;
@@ -11,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,14 +59,14 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void testGetEntityCount() {
-        int count = DbormHandler.getDborm().getEntityCount(UserInfo.class);
+        long count = DbormHandler.getDborm().getEntityCount(UserInfo.class);
         assertEquals(1, count);
     }
 
     @Test
     public void testGetCount() {
         String sql = "SELECT COUNT(*) FROM user_info where id = ? ";
-        int count = DbormHandler.getDborm().getCount(sql, USER_ID);
+        long count = DbormHandler.getDborm().getCount(sql, USER_ID);
         assertEquals(1, count);
     }
 
@@ -77,21 +77,17 @@ public class SelectTest extends BaseTest {
         selectionArgs.add(USER_ID);
         DbormDataBase dbormDataBase = DbormHandler.getDborm().getDataBase();
         Connection conn = null;
-        ResultSet rs = null;
         try {
             conn = dbormDataBase.getConnection();
-            rs = new SQLExecutor().getResultSet(sql, selectionArgs, conn);
-            while (rs.next()) {
-                assertEquals(USER_NICKNAME, rs.getString("nickname"));
-                assertEquals(USER_ID, rs.getString(1));
+            List<QueryResult> queryResults = new SQLExecutor().query(sql, selectionArgs, conn);
+            for (QueryResult queryResult : queryResults) {
+                assertEquals(USER_NICKNAME, queryResult.getObject("nickname"));
+                assertEquals(USER_ID, queryResult.getObject(0));
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
                 dbormDataBase.closeConn(conn);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,7 +100,6 @@ public class SelectTest extends BaseTest {
     public static void after() {
         cleanTable();
     }
-
 
 
 }

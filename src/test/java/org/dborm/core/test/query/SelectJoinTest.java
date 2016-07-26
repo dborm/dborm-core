@@ -68,12 +68,12 @@ public class SelectJoinTest extends BaseTest {
     public void testSelectModel() {
         /* 注意:
             1、想要将列的值映射到属性名为bookId的属性上,列的别名必须是book_id,不能为bookId
-            2、联合查询中如果多个表有相同的字段名称,最好将其中一个字段设置别名避免冲突,如果不设置,则只能接收到靠前的一个表对应的列的值
+            2、联合查询中如果多个表有相同的字段名称,最好将其中一个字段设置别名避免冲突,如果不设置,则只能接收到靠后的一个表对应的列的值
                如user_info表中存在字段名称为id的字段,book_info表中也存在字段名称为id的字段名称,
-               如果连接查询添加为FROM user_info u left join book_info b on u.id = b.user_id
-               接受查询结果的对象中有一个属性名为id的属性,则接收的id的值是user_info表的值
+               如果连接查询为select * FROM user_info u left join book_info b on u.id = b.user_id
+               接受查询结果的对象中有一个属性名为id的属性,则接收的id的值是book_info表的值
          */
-        String sql = "SELECT u.*, b.id as book_id, b.name as book_name, b.* FROM user_info u left join book_info b on u.id = b.user_id";
+        String sql = "SELECT u.*, b.id as book_id, b.name as book_name FROM user_info u left join book_info b on u.id = b.user_id";
         List<SelectModel> selectModels = DbormHandler.getDborm().getEntities(SelectModel.class, sql);
         assertNotNull(selectModels.get(0));
         for (SelectModel selectModel : selectModels) {
@@ -96,12 +96,12 @@ public class SelectJoinTest extends BaseTest {
             Map<String, Object> entityTeam = entityList.get(i);
             UserInfo user = (UserInfo) entityTeam.get(UserInfo.class.getName());
             BookInfo bookInfo = (BookInfo) entityTeam.get(BookInfo.class.getName());
-            assertEquals(USER_ID, user.getId());
+            assertEquals(BOOK_ID, user.getId());
             /*
-            注意:此时查询结果中列名为id的列有两个,连接查询的时候会出现靠前的表的值覆盖靠后的表的值
-                连接的多个表中有相同字段的时候不建议使用该查询模式方式
+            注意:此时查询结果中列名为id的列有两个,连接查询的时候会出现靠后的表的值覆盖靠前的表的值
+                连接的多个表中有相同字段的时候不建议使用该查询模式方式,如果使用该模式,需要将同名列起别名
              */
-            assertEquals(USER_ID, bookInfo.getId());
+            assertEquals(BOOK_ID, bookInfo.getId());
             assertEquals(true, bookInfo.getLooked());
         }
     }

@@ -1,6 +1,7 @@
 package org.dborm.core.framework;
 
 import org.dborm.core.domain.ColumnBean;
+import org.dborm.core.domain.QueryResult;
 import org.dborm.core.schema.SchemaConstants;
 import org.dborm.core.utils.DbormConstants;
 import org.dborm.core.utils.DbormContexts;
@@ -9,10 +10,7 @@ import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * 实体解析器
@@ -54,10 +52,10 @@ public class EntityResolver {
         Map<String, Field> columnFields = new HashMap<String, Field>();
         Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
         Map<String, Field> allFields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);
-        for (Entry<String, Field> fieldInfo : allFields.entrySet()) {
-            Field field = fieldInfo.getValue();
-            if (columns.containsKey(fieldInfo.getKey())) {// 如果表的列属性信息中包含该属性，则说明该属性属为列属性
-                columnFields.put(fieldInfo.getKey(), field);
+        for (String columnName : allFields.keySet()) {
+            Field field = allFields.get(columnName);
+            if (columns.containsKey(columnName)) {// 如果表的列属性信息中包含该属性，则说明该属性属为列属性
+                columnFields.put(columnName, field);
             }
         }
         return columnFields;
@@ -74,11 +72,11 @@ public class EntityResolver {
     public Map<String, Field> getEntityPrimaryKeyFields(Class<?> entityClass) {
         Map<String, Field> primaryKeys = new HashMap<String, Field>();
         Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
-        for (Entry<String, ColumnBean> entry : columns.entrySet()) {
-            ColumnBean column = entry.getValue();
+        for (String columnName : columns.keySet()) {
+            ColumnBean column = columns.get(columnName);
             if (column.isPrimaryKey()) {
                 Field field = reflectUtils.getFieldByName(entityClass, column.getFieldName());
-                primaryKeys.put(entry.getKey(), field);
+                primaryKeys.put(columnName, field);
             }
         }
         return primaryKeys;
@@ -88,18 +86,16 @@ public class EntityResolver {
      * 将结果集转换为实体对象（如果列没有对应的属性则丢弃）
      *
      * @param entityClass 实体类
-     * @param rs          结果集
-     * @param columnNames 结果集中包含的列名
+     * @param queryResult 结果集
      * @return 实体对象
-     * @throws SQLException
      */
-    public Object getEntity(Class<?> entityClass,  ResultSet rs, String[] columnNames) throws SQLException {
+    public Object getEntity(Class<?> entityClass, QueryResult queryResult) throws Exception {
         Map<String, Field> fields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
-        for (String columnName : columnNames) {
+        for (String columnName : queryResult.getResultMap().keySet()) {
             Field field = fields.get(columnName);
             if (field != null) {
-                Object value = rs.getObject(columnName);
+                Object value = queryResult.getObject(columnName);
                 reflectUtils.setFieldValue(field, entity, value);
             }
         }
@@ -109,28 +105,25 @@ public class EntityResolver {
     /**
      * 将结果集转换为实体对象（如果列没有对应的属性则存放在Map集合中）
      *
-     * @param entityClass 实体类
-     * @param rs          结果集
-     * @param columnNames 结果集中包含的列名
-     * @return 实体对象
-     * @throws SQLException
+     * @param entityClass 实体类型
+     * @param queryResult 结果集
+     * @return 实体类对应的对象
      */
-    public Object getEntityAll(Class<?> entityClass, ResultSet rs, String[] columnNames) throws SQLException {
+    public Object getEntityAll(Class<?> entityClass, QueryResult queryResult) throws Exception {
         Map<String, Field> fields = CacheDborm.getCache().getEntityAllFieldsCache(entityClass);// 获得该类的所有属性，支持联合查询
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
         Method putParam = null;
-        for (String columnName : columnNames) {
+        for (String columnName : queryResult.getResultMap().keySet()) {
+            Object value = queryResult.getObject(columnName);
             Field field = fields.get(columnName);
             if (field != null) {
-                Object value = rs.getObject(columnName);
                 reflectUtils.setFieldValue(field, entity, value);
             } else {//如果找不到该属性,则将值存放到Map集合中
                 if (putParam == null) {
                     putParam = reflectUtils.getMethod(entity, DbormConstants.BASE_PUT_METHOD, String.class, Object.class);
                 }
-                String name = stringUtils.underlineToHumpName(columnName, false);
-                Object value = rs.getObject(columnName);
-                reflectUtils.setMethodValue(entity, putParam, name, value);
+                String propertyName = stringUtils.underlineToHumpName(columnName, false);
+                reflectUtils.setMethodValue(entity, putParam, propertyName, value);
             }
         }
         return entity;
@@ -146,13 +139,11 @@ public class EntityResolver {
      * @author COCHO
      * @time 2013-5-3上午11:26:28
      */
-    public <T> List getColumnFiledValues(T entity) {
+    public <T> List<Object> getColumnFiledValues(T entity) {
         Class<?> entityClass = entity.getClass();
-        List fieldValues = new ArrayList();
+        List<Object> fieldValues = new ArrayList<Object>();
         Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = columnFields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            Field field = entry.getValue();
+        for (Field field : columnFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
             fieldValues.add(value);
         }
@@ -168,17 +159,16 @@ public class EntityResolver {
      * @author COCHO
      * @time 2013-5-3上午11:26:28
      */
-    public <T> List getColumnFiledValuesUseDefault(T entity) {
+    public <T> List<Object> getColumnFiledValuesUseDefault(T entity) {
         Class<?> entityClass = entity.getClass();
-        List fieldValues = new ArrayList();
+        List<Object> fieldValues = new ArrayList<Object>();
         Map<String, ColumnBean> columns = CacheDborm.getCache().getTablesCache(entityClass).getColumns();
         Map<String, Field> columnFields = CacheDborm.getCache().getEntityColumnFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = columnFields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            Field field = entry.getValue();
+        for (String columnName : columnFields.keySet()) {
+            Field field = columnFields.get(columnName);
             Object value = reflectUtils.getFieldValue(field, entity);
             if (value == null) {//如果属性的值为空，则查看一下该属性是否设置的有默认值，如果默认值不为空则使用默认值
-                Object defaultValue = columns.get(entry.getKey()).getDefaultValue();
+                Object defaultValue = columns.get(columnName).getDefaultValue();
                 if (defaultValue != null && !defaultValue.toString().equalsIgnoreCase(SchemaConstants.DEFAULT_VALUE_NULL)) {
                     value = defaultValue;
                 }
@@ -197,13 +187,11 @@ public class EntityResolver {
      * @author COCHO
      * @time 2013-5-3上午11:26:28
      */
-    public <T> List getPrimaryKeyFiledValues(T entity) {
-        List primaryKeyValues = new ArrayList();
+    public <T> List<Object> getPrimaryKeyFiledValues(T entity) {
+        List<Object> primaryKeyValues = new ArrayList<Object>();
         Class<?> entityClass = entity.getClass();
         Map<String, Field> primaryKeyFields = CacheDborm.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
-        Set<Entry<String, Field>> entrySet = primaryKeyFields.entrySet();
-        for (Entry<String, Field> entry : entrySet) {
-            Field field = entry.getValue();
+        for (Field field : primaryKeyFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
             if (value != null) {
                 primaryKeyValues.add(value);
