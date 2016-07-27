@@ -1,36 +1,28 @@
-package org.dborm.core.test.utils.domain;
+package org.dborm.test.utils.domain;
 
-
-import org.dborm.core.annotation.Column;
-import org.dborm.core.annotation.Relation;
-import org.dborm.core.annotation.Table;
 import org.dborm.core.domain.BaseDomain;
 
 import java.util.Date;
 import java.util.List;
 
-@Table
-public class UserInfo extends BaseDomain {
+/**
+ * Created by shk
+ * 16/5/16 13:53
+ */
+public class User extends BaseDomain{
 
-    @Column(isPrimaryKey = true)
     private String id;
 
-    @Column
     private String name;
 
-    @Column
     private String nickname;
 
-    @Column(defaultValue = "18")
     private Integer age;
 
-    @Column
     private Date createTime;
 
-    @Relation
     BookInfo bookInfo;
 
-    @Relation
     List<BookInfo> bookInfos;
 
     public String getId() {
@@ -73,19 +65,19 @@ public class UserInfo extends BaseDomain {
         this.createTime = createTime;
     }
 
-    public List<BookInfo> getBookInfos() {
-        return bookInfos;
-    }
-
-    public void setBookInfos(List<BookInfo> bookInfos) {
-        this.bookInfos = bookInfos;
-    }
-
     public BookInfo getBookInfo() {
         return bookInfo;
     }
 
     public void setBookInfo(BookInfo bookInfo) {
         this.bookInfo = bookInfo;
+    }
+
+    public List<BookInfo> getBookInfos() {
+        return bookInfos;
+    }
+
+    public void setBookInfos(List<BookInfo> bookInfos) {
+        this.bookInfos = bookInfos;
     }
 }

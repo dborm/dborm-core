@@ -1,9 +1,9 @@
-package org.dborm.core.test.init;
+package org.dborm.test.init;
 
 import org.dborm.core.api.Dborm;
 import org.dborm.core.framework.DbormHandler;
-import org.dborm.core.test.utils.db.DataBaseManager;
-import org.dborm.core.test.utils.domain.UserInfo;
+import org.dborm.test.utils.db.DataBaseManager;
+import org.dborm.test.utils.domain.UserInfo;
 import org.dborm.core.utils.DbormContexts;
 import org.junit.Test;
 

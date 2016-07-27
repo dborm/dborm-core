@@ -1,9 +1,9 @@
-package org.dborm.core.test.excute;
+package org.dborm.test.excute;
 
-import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DbormManager;
-import org.dborm.core.test.utils.domain.BookInfo;
-import org.dborm.core.test.utils.domain.UserInfo;
+import org.dborm.test.utils.BaseTest;
+import org.dborm.test.utils.db.DbormManager;
+import org.dborm.test.utils.domain.BookInfo;
+import org.dborm.test.utils.domain.UserInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

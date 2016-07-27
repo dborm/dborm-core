@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tables>
 
-    <table class_path="org.dborm.core.test.utils.domain.User" tableName="user_info">
+    <table class_path="org.dborm.test.utils.domain.User" tableName="user_info">
         <column default_value="null" field_name="id" is_primary_key="true"/>
         <column default_value="null" field_name="name" is_primary_key="false"/>
         <column field_name="nickname"/>
@@ -12,7 +12,7 @@
     </table>
 
     <!--可以将多个表的描述信息放在同一个schema文件中-->
-    <!--<table class_path="org.dborm.core.test.utils.domain.BookInfo">-->
+    <!--<table class_path="BookInfo">-->
     <!--<column default_value="null" field_name="id" is_primary_key="true"/>-->
     <!--<column default_value="null" field_name="userId" is_primary_key="true"/>-->
     <!--<column field_name="price"/>-->

@@ -1,8 +1,8 @@
-package org.dborm.core.test.utils;
+package org.dborm.test.utils;
 
-import org.dborm.core.test.utils.db.DbormManager;
-import org.dborm.core.test.utils.domain.BookInfo;
-import org.dborm.core.test.utils.domain.UserInfo;
+import org.dborm.test.utils.db.DbormManager;
+import org.dborm.test.utils.domain.BookInfo;
+import org.dborm.test.utils.domain.UserInfo;
 
 import java.util.ArrayList;
 import java.util.Date;

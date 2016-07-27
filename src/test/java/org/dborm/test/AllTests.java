@@ -1,10 +1,10 @@
-package org.dborm.core.test;
+package org.dborm.test;
 
 
-import org.dborm.core.test.excute.*;
-import org.dborm.core.test.init.InitTest;
-import org.dborm.core.test.query.SelectJoinTest;
-import org.dborm.core.test.query.SelectTest;
+import org.dborm.test.excute.*;
+import org.dborm.test.init.InitTest;
+import org.dborm.test.query.SelectJoinTest;
+import org.dborm.test.query.SelectTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

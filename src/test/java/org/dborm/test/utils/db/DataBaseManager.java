@@ -1,4 +1,4 @@
-package org.dborm.core.test.utils.db;
+package org.dborm.test.utils.db;
 
 import org.dborm.core.api.DbormDataBase;
 

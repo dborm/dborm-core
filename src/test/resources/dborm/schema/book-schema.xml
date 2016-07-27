@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tables>
 
-	<!--<table class_path="org.dborm.core.test.utils.domain.BookInfo">-->
+	<!--<table class_path="BookInfo">-->
 		<!--<column default_value="null" field_name="id" is_primary_key="true"/>-->
 		<!--<column default_value="null" field_name="userId" is_primary_key="true"/>-->
 		<!--<column field_name="price"/>-->

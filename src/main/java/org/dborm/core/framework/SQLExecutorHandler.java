@@ -63,8 +63,8 @@ public class SQLExecutorHandler implements SQLExecutor {
                 }
                 pst.executeUpdate();
             }
-            conn.commit();
             logger.debug(sqlBuffer.toString());
+            conn.commit();
         } catch (Exception e) {
             conn.rollback();
             throw new Exception("出异常的SQL如下:\n" + currentSql, e);

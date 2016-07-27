@@ -1,11 +1,11 @@
-package org.dborm.core.test.query;
+package org.dborm.test.query;
 
 import org.dborm.core.domain.BaseDomain;
-import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DbormManager;
-import org.dborm.core.test.utils.domain.BookInfo;
-import org.dborm.core.test.utils.domain.SelectModel;
-import org.dborm.core.test.utils.domain.UserInfo;
+import org.dborm.test.utils.BaseTest;
+import org.dborm.test.utils.db.DbormManager;
+import org.dborm.test.utils.domain.BookInfo;
+import org.dborm.test.utils.domain.SelectModel;
+import org.dborm.test.utils.domain.UserInfo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -1,11 +1,11 @@
-package org.dborm.core.test.schema;
+package org.dborm.test.schema;
 
 import org.dborm.core.api.Dborm;
 import org.dborm.core.framework.DbormHandler;
 import org.dborm.core.schema.DbormSchemaInit;
-import org.dborm.core.test.utils.BaseTest;
-import org.dborm.core.test.utils.db.DataBaseManager;
-import org.dborm.core.test.utils.domain.User;
+import org.dborm.test.utils.BaseTest;
+import org.dborm.test.utils.db.DataBaseManager;
+import org.dborm.test.utils.domain.User;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

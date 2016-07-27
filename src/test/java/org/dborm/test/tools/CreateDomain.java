@@ -1,4 +1,4 @@
-package org.dborm.core.test.tools;
+package org.dborm.test.tools;
 
 import org.dborm.core.utils.StringUtilsDborm;
 

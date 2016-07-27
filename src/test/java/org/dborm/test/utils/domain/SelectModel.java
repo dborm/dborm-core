@@ -1,4 +1,4 @@
-package org.dborm.core.test.utils.domain;
+package org.dborm.test.utils.domain;
 
 import org.dborm.core.domain.BaseDomain;
 

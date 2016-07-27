@@ -37,6 +37,11 @@ public class DbormHandler implements Dborm {
         this.sqlExecutor = sqlExecutor;
     }
 
+    public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor, DbormLogger logger) {
+        this.dataBase = dataBase;
+        this.sqlExecutor = sqlExecutor;
+        this.logger = logger;
+    }
 
     public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor, DbormLogger logger, boolean showSql) {
         this.dataBase = dataBase;
