@@ -8,6 +8,7 @@ import org.dborm.core.domain.PairDborm;
 import org.dborm.core.domain.QueryResult;
 import org.dborm.core.utils.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 
@@ -274,7 +275,8 @@ public class DbormHandler implements Dborm {
         List<T> results = new ArrayList<T>();
         if (stringUtils.isNotBlank(sql) && entityClass != null && connection != null) {
             try {
-                List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, connection);
+                Map<String, Field> fields = Cache.getCache().getEntityAllFieldsCache(entityClass);
+                List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, fields, connection);
                 for (QueryResult queryResult : queryResults) {
                     Object entity = entityResolver.getEntityAll(entityClass, queryResult);
                     results.add((T) entity);
@@ -298,7 +300,13 @@ public class DbormHandler implements Dborm {
             Object connection = getConnection();
             if (connection != null) {
                 try {
-                    List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, connection);
+                    Map<String, Field> allFields = new HashMap<String, Field>();
+                    for (Class<?> entityClass : entityClasses) {// 对每一个对象实例化
+                        Map<String, Field> fields = Cache.getCache().getEntityAllFieldsCache(entityClass);
+                        allFields.putAll(fields);
+                    }
+
+                    List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, allFields, connection);
                     for (QueryResult queryResult : queryResults) {
                         Map<String, Object> entityTeam = new HashMap<String, Object>();// 实体组
                         for (Class<?> entityClass : entityClasses) {// 对每一个对象实例化

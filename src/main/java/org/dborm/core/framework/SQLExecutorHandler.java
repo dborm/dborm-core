@@ -6,6 +6,7 @@ import org.dborm.core.domain.QueryResult;
 import org.dborm.core.utils.DbormContexts;
 import org.dborm.core.domain.PairDborm;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,6 +108,13 @@ public class SQLExecutorHandler implements SQLExecutor {
         }
         return queryResults;
     }
+
+
+    @Override
+    public List<QueryResult> query(String sql, List bindArgs, Map<String, Field> fields, Object connection) throws Exception {
+        return query(sql, bindArgs, connection);
+    }
+
 
     /**
      * 检查SQL语句并做日志记录

@@ -21,7 +21,7 @@ public class DataBaseManager extends DbormDataBase {
     }
 
     public void closeConnection(Object connection) {
-        if(connection != null){
+        if (connection != null) {
             Connection con = (Connection) connection;
             try {
                 con.close();
@@ -40,10 +40,16 @@ public class DataBaseManager extends DbormDataBase {
      * @time 2013-5-6上午10:46:44
      */
     private Connection createConnection() {
+//        String driver = "com.mysql.jdbc.Driver";
+//        String url = "jdbc:mysql://rds3tmsxzi96h6921824.mysql.rds.aliyuncs.com:3306/dborm_test_db?useUnicode=true&characterEncoding=utf8";
+//        String username = "dborm";
+//        String password = "dborm_test";
+
         String driver = "com.mysql.jdbc.Driver";
-        String url = "jdbc:mysql://rds3tmsxzi96h6921824.mysql.rds.aliyuncs.com:3306/dborm_test_db?useUnicode=true&characterEncoding=utf8";
-        String username = "dborm";
-        String password = "dborm_test";
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8";
+        String username = "root";
+        String password = "";
+
 
         Connection conn = null;
         try {
