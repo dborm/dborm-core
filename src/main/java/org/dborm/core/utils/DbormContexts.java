@@ -9,11 +9,6 @@ package org.dborm.core.utils;
 public class DbormContexts {
 
     /**
-     * 是否显示SQL语句（必须在DEBUG模式下并且异常处理类被实现了该参数才有效）
-     */
-    public static boolean showSql = true;
-
-    /**
      * 字符串类型的数据库字段长度，根据字符串类型属性创建xml文件时生效
      */
     public static int columnLength = 64;

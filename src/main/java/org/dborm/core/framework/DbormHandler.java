@@ -27,28 +27,9 @@ public class DbormHandler implements Dborm {
 
 
     public DbormHandler(DbormDataBase dataBase) {
-        this.logger = new DbormLoggerHandler();
         this.dataBase = dataBase;
-        this.sqlExecutor = new SQLExecutorHandler(this.logger);
-    }
-
-    public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor) {
-        this.logger = new DbormLoggerHandler();
-        this.dataBase = dataBase;
-        this.sqlExecutor = sqlExecutor;
-    }
-
-    public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor, DbormLogger logger) {
-        this.dataBase = dataBase;
-        this.sqlExecutor = sqlExecutor;
-        this.logger = logger;
-    }
-
-    public DbormHandler(DbormDataBase dataBase, SQLExecutor sqlExecutor, DbormLogger logger, boolean showSql) {
-        this.dataBase = dataBase;
-        this.sqlExecutor = sqlExecutor;
-        this.logger = logger;
-        DbormContexts.showSql = showSql;
+        sqlExecutor = dataBase.getSqlExecutor();
+        logger = dataBase.getLogger();
     }
 
     @Override

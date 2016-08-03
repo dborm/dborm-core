@@ -4,7 +4,6 @@ import org.dborm.core.api.Dborm;
 import org.dborm.core.framework.DbormHandler;
 import org.dborm.test.utils.db.DataBaseManager;
 import org.dborm.test.utils.domain.UserInfo;
-import org.dborm.core.utils.DbormContexts;
 import org.junit.Test;
 
 import java.util.Date;
@@ -22,7 +21,6 @@ public class InitTest {
     @Test
     public void init() {
         try {
-            initDbormContexts();
             initDborm();
             check();
         } catch (Exception e) {
@@ -30,12 +28,9 @@ public class InitTest {
         }
     }
 
-    private void initDbormContexts() {
-        DbormContexts.showSql = true;
-    }
-
     private void initDborm() {
         try {
+            DataBaseManager.showSql = true;
             dborm = new DbormHandler(new DataBaseManager());
         } catch (Exception e) {
             e.printStackTrace();

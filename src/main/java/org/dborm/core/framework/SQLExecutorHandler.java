@@ -1,10 +1,10 @@
 package org.dborm.core.framework;
 
+import org.dborm.core.api.DbormDataBase;
 import org.dborm.core.api.DbormLogger;
 import org.dborm.core.api.SQLExecutor;
-import org.dborm.core.domain.QueryResult;
-import org.dborm.core.utils.DbormContexts;
 import org.dborm.core.domain.PairDborm;
+import org.dborm.core.domain.QueryResult;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -145,7 +145,7 @@ public class SQLExecutorHandler implements SQLExecutor {
     }
 
     private void showSql(String sql) {
-        if (DbormContexts.showSql) {
+        if (DbormDataBase.showSql) {
             logger.debug(sql);
         }
     }

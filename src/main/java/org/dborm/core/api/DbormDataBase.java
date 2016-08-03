@@ -1,5 +1,8 @@
 package org.dborm.core.api;
 
+import org.dborm.core.framework.SQLExecutorHandler;
+import org.dborm.core.utils.DbormLoggerHandler;
+
 /**
  * 数据库连接相关的信息管理接口
  *
@@ -7,6 +10,17 @@ package org.dborm.core.api;
  * @time 2014年1月15日 @下午5:08:18
  */
 public abstract class DbormDataBase {
+
+
+    /**
+     * 是否显示SQL语句（必须在DEBUG模式下并且异常处理类被实现了该参数才有效）
+     */
+    public static boolean showSql = true;
+
+    private DbormLogger logger = new DbormLoggerHandler();
+
+    private SQLExecutor sqlExecutor = new SQLExecutorHandler(logger);
+
 
     /**
      * 获得数据库连接
@@ -94,6 +108,19 @@ public abstract class DbormDataBase {
     }
 
 
+    public SQLExecutor getSqlExecutor() {
+        return sqlExecutor;
+    }
 
+    public void setSqlExecutor(SQLExecutor sqlExecutor) {
+        this.sqlExecutor = sqlExecutor;
+    }
 
+    public DbormLogger getLogger() {
+        return logger;
+    }
+
+    public void setLogger(DbormLogger logger) {
+        this.logger = logger;
+    }
 }
