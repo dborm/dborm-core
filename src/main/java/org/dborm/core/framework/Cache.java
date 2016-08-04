@@ -18,7 +18,7 @@ public class Cache {
 
 
     private static Cache cache;
-    EntityResolver entityResolver = new EntityResolver();
+    EntityParser entityResolver = new EntityParser();
 
     public static synchronized Cache getCache() {
         if (cache == null) {

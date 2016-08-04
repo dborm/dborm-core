@@ -16,7 +16,7 @@ public class DbormHandler implements Dborm {
 
     SQLPairFactory sqlPairFactory = new SQLPairFactory(this);
     StringUtilsDborm stringUtils = new StringUtilsDborm();
-    EntityResolver entityResolver = new EntityResolver();
+    EntityFactory entityFactory = new EntityFactory();
 
     boolean autoCommit = true;//true:自动提交 false:需调用commit函数才会提交
 
@@ -259,7 +259,7 @@ public class DbormHandler implements Dborm {
                 Map<String, Field> fields = Cache.getCache().getEntityAllFieldsCache(entityClass);
                 List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, fields, connection);
                 for (QueryResult queryResult : queryResults) {
-                    Object entity = entityResolver.getEntityAll(entityClass, queryResult);
+                    Object entity = entityFactory.getEntityAll(entityClass, queryResult);
                     results.add((T) entity);
                 }
             } catch (Exception e) {
@@ -291,7 +291,7 @@ public class DbormHandler implements Dborm {
                     for (QueryResult queryResult : queryResults) {
                         Map<String, Object> entityTeam = new HashMap<String, Object>();// 实体组
                         for (Class<?> entityClass : entityClasses) {// 对每一个对象实例化
-                            Object entity = entityResolver.getEntity(entityClass, queryResult);
+                            Object entity = entityFactory.getEntity(entityClass, queryResult);
                             entityTeam.put(entityClass.getName(), entity);
                         }
                         results.add(entityTeam);

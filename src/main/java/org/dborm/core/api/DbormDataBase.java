@@ -1,5 +1,6 @@
 package org.dborm.core.api;
 
+import org.dborm.core.framework.DataConverterHandler;
 import org.dborm.core.framework.SQLExecutorHandler;
 import org.dborm.core.utils.DbormLoggerHandler;
 
@@ -16,6 +17,8 @@ public abstract class DbormDataBase {
      * 是否显示SQL语句（必须在DEBUG模式下并且异常处理类被实现了该参数才有效）
      */
     public static boolean showSql = true;
+
+    public static DataConverterHandler dataConverter = new DataConverterHandler();
 
     private DbormLogger logger = new DbormLoggerHandler();
 

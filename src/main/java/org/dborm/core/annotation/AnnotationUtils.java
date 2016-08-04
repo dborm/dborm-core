@@ -3,7 +3,7 @@ package org.dborm.core.annotation;
 
 import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.domain.TableBean;
-import org.dborm.core.framework.EntityResolver;
+import org.dborm.core.framework.EntityParser;
 import org.dborm.core.utils.StringUtilsDborm;
 
 import java.lang.reflect.Field;
@@ -21,7 +21,7 @@ import java.util.Set;
 public class AnnotationUtils {
 
     StringUtilsDborm stringUtils = new StringUtilsDborm();
-    EntityResolver entityResolver = new EntityResolver();
+    EntityParser entityResolver = new EntityParser();
 
     /**
      * 通过类获得该类的注解描述信息

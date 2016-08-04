@@ -25,7 +25,8 @@ public class SQLPairFactory {
 
     private StringUtilsDborm stringUtils = new StringUtilsDborm();
     private SQLTranslater sqlTranslater = new SQLTranslater();
-    private EntityResolver entityResolver = new EntityResolver();
+    private EntityParser entityParser = new EntityParser();
+    EntityFactory entityFactory = new EntityFactory();
     ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
 
     public <T> PairDborm<String, List> insert(T entity) {
@@ -36,7 +37,7 @@ public class SQLPairFactory {
             sql = sqlTranslater.getInsertSql(entityClass);
             Cache.getCache().putSqlCache(entityClass.getName() + ".INSERT", sql);
         }
-        List bindArgs = entityResolver.getColumnFiledValuesUseDefault(entity);
+        List bindArgs = entityFactory.getColumnFiledValuesUseDefault(entity);
         return PairDborm.create(sql, bindArgs);
     }
 
@@ -55,8 +56,8 @@ public class SQLPairFactory {
             sql = sqlTranslater.getReplaceSql(entityClass);
             Cache.getCache().putSqlCache(entityClass.getName() + ".REPLACE", sql);
         }
-        List bindArgs = entityResolver.getColumnFiledValues(entity);
-        bindArgs.addAll(entityResolver.getPrimaryKeyFiledValues(entity));
+        List bindArgs = entityFactory.getColumnFiledValues(entity);
+        bindArgs.addAll(entityFactory.getPrimaryKeyFiledValues(entity));
         return PairDborm.create(sql, bindArgs);
     }
 
@@ -75,7 +76,7 @@ public class SQLPairFactory {
             sql = sqlTranslater.getDeleteSql(entityClass);
             Cache.getCache().putSqlCache(entityClass.getName() + ".DELETE", sql);
         }
-        List bindArgs = entityResolver.getPrimaryKeyFiledValues(entity);
+        List bindArgs = entityFactory.getPrimaryKeyFiledValues(entity);
         return PairDborm.create(sql, bindArgs);
     }
 
@@ -109,7 +110,7 @@ public class SQLPairFactory {
         sqlContent.append(stringUtils.cutLastSign(columnName.toString(), ", "));
         sqlContent.append(" WHERE ");
         sqlContent.append(sqlTranslater.parsePrimaryKeyWhere(entityClass));
-        bindArgs.addAll(entityResolver.getPrimaryKeyFiledValues(entity));
+        bindArgs.addAll(entityFactory.getPrimaryKeyFiledValues(entity));
         return PairDborm.create(sqlContent.toString(), bindArgs);
     }
 
@@ -155,7 +156,7 @@ public class SQLPairFactory {
     }
 
     public <T> PairDborm<String, List> getCountByPrimaryKey(T entity) {
-        List primaryKeyValue = entityResolver.getPrimaryKeyFiledValues(entity);
+        List primaryKeyValue = entityFactory.getPrimaryKeyFiledValues(entity);
         if (primaryKeyValue.size() > 0) {
             // 例如： SELECT COUNT(*) FROM users WHERE user_id=?
             StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ");
