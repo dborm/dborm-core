@@ -18,12 +18,11 @@ public abstract class DbormDataBase {
      */
     public static boolean showSql = true;
 
-    public static DataConverterHandler dataConverter = new DataConverterHandler();
-
     private DbormLogger logger = new DbormLoggerHandler();
 
     private SQLExecutor sqlExecutor = new SQLExecutorHandler(logger);
 
+    private DataConverter dataConverter = new DataConverterHandler();
 
     /**
      * 获得数据库连接
@@ -125,5 +124,13 @@ public abstract class DbormDataBase {
 
     public void setLogger(DbormLogger logger) {
         this.logger = logger;
+    }
+
+    public DataConverter getDataConverter() {
+        return dataConverter;
+    }
+
+    public void setDataConverter(DataConverter dataConverter) {
+        this.dataConverter = dataConverter;
     }
 }

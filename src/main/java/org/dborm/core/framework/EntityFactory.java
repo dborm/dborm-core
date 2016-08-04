@@ -1,5 +1,6 @@
 package org.dborm.core.framework;
 
+import org.dborm.core.api.Dborm;
 import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.domain.QueryResult;
 import org.dborm.core.schema.SchemaConstants;
@@ -23,7 +24,11 @@ public class EntityFactory {
 
     StringUtilsDborm stringUtils = new StringUtilsDborm();
     ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
+    Dborm dborm;
 
+    public EntityFactory(Dborm dborm) {
+        this.dborm = dborm;
+    }
 
     /**
      * 将结果集转换为实体对象（如果列没有对应的属性则丢弃）
@@ -39,6 +44,7 @@ public class EntityFactory {
             Field field = fields.get(columnName);
             if (field != null) {
                 Object value = queryResult.getObject(columnName);
+                value = dborm.getDataBase().getDataConverter().columnValueToFieldValue(value, field);
                 reflectUtils.setFieldValue(field, entity, value);
             }
         }
@@ -57,8 +63,9 @@ public class EntityFactory {
         Object entity = reflectUtils.createInstance(entityClass);// 创建实体类的实例
         Method putParam = null;
         for (String columnName : queryResult.getResultMap().keySet()) {
-            Object value = queryResult.getObject(columnName);
             Field field = fields.get(columnName);
+            Object value = queryResult.getObject(columnName);
+            value = dborm.getDataBase().getDataConverter().columnValueToFieldValue(value, field);
             if (field != null) {
                 reflectUtils.setFieldValue(field, entity, value);
             } else {//如果找不到该属性,则将值存放到Map集合中
@@ -88,6 +95,7 @@ public class EntityFactory {
         Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
         for (Field field : columnFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
+            value = dborm.getDataBase().getDataConverter().fieldValueToColumnValue(value);
             fieldValues.add(value);
         }
         return fieldValues;
@@ -116,6 +124,7 @@ public class EntityFactory {
                     value = defaultValue;
                 }
             }
+            value = dborm.getDataBase().getDataConverter().fieldValueToColumnValue(value);
             fieldValues.add(value);
         }
         return fieldValues;
@@ -137,6 +146,7 @@ public class EntityFactory {
         for (Field field : primaryKeyFields.values()) {
             Object value = reflectUtils.getFieldValue(field, entity);
             if (value != null) {
+                value = dborm.getDataBase().getDataConverter().fieldValueToColumnValue(value);
                 primaryKeyValues.add(value);
             } else {
                 String warnMessage = "警告: 属性(" + field.getName() + ") 在类(" + entityClass.getName() + ")里面是主键，不能为空!";

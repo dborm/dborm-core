@@ -1,9 +1,6 @@
 package org.dborm.core.framework;
 
-import org.dborm.core.api.Dborm;
-import org.dborm.core.api.DbormDataBase;
-import org.dborm.core.api.DbormLogger;
-import org.dborm.core.api.SQLExecutor;
+import org.dborm.core.api.*;
 import org.dborm.core.domain.PairDborm;
 import org.dborm.core.domain.QueryResult;
 import org.dborm.core.utils.*;
@@ -16,7 +13,6 @@ public class DbormHandler implements Dborm {
 
     SQLPairFactory sqlPairFactory = new SQLPairFactory(this);
     StringUtilsDborm stringUtils = new StringUtilsDborm();
-    EntityFactory entityFactory = new EntityFactory();
 
     boolean autoCommit = true;//true:自动提交 false:需调用commit函数才会提交
 
@@ -24,12 +20,14 @@ public class DbormHandler implements Dborm {
     private DbormDataBase dataBase;
     private SQLExecutor sqlExecutor;
     private DbormLogger logger;
+    EntityFactory entityFactory;
 
 
     public DbormHandler(DbormDataBase dataBase) {
         this.dataBase = dataBase;
-        sqlExecutor = dataBase.getSqlExecutor();
-        logger = dataBase.getLogger();
+        this.sqlExecutor = dataBase.getSqlExecutor();
+        this.logger = dataBase.getLogger();
+        this.entityFactory = new EntityFactory(this);
     }
 
     @Override

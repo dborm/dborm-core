@@ -17,17 +17,18 @@ import java.util.*;
  */
 public class SQLPairFactory {
 
+    private StringUtilsDborm stringUtils = new StringUtilsDborm();
+    private SQLTranslater sqlTranslater = new SQLTranslater();
+    private EntityParser entityParser = new EntityParser();
+    ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
+    EntityFactory entityFactory;
+
     private Dborm dborm;
 
     public SQLPairFactory(DbormHandler dborm) {
         this.dborm = dborm;
+        this.entityFactory = new EntityFactory(dborm);
     }
-
-    private StringUtilsDborm stringUtils = new StringUtilsDborm();
-    private SQLTranslater sqlTranslater = new SQLTranslater();
-    private EntityParser entityParser = new EntityParser();
-    EntityFactory entityFactory = new EntityFactory();
-    ReflectUtilsDborm reflectUtils = new ReflectUtilsDborm();
 
     public <T> PairDborm<String, List> insert(T entity) {
         entity = dborm.getDataBase().beforeInsert(entity);
@@ -104,6 +105,7 @@ public class SQLPairFactory {
             if (value != null) {
                 columnName.append(name);
                 columnName.append("=?, ");
+                value = dborm.getDataBase().getDataConverter().fieldValueToColumnValue(value);
                 bindArgs.add(value);
             }
         }
@@ -192,6 +194,7 @@ public class SQLPairFactory {
                 }
                 columnNames.append(name);
                 columnNames.append("=? ");
+                value = dborm.getDataBase().getDataConverter().fieldValueToColumnValue(value);
                 bindArgs.add(value);
             }
         }
@@ -210,9 +213,9 @@ public class SQLPairFactory {
     /**
      * 获取级联对象SAVE相关的SQL语句对
      *
-     * @param entity 对象
-     * @param type   操作类型
-     * @param connection   数据库连接
+     * @param entity     对象
+     * @param type       操作类型
+     * @param connection 数据库连接
      * @return SQL操作集合
      * @author COCHO
      * @time 2013-6-5下午1:55:14
