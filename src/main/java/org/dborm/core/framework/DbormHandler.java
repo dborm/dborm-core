@@ -372,7 +372,7 @@ public class DbormHandler implements Dborm {
             if (pair != null) {
                 try {
                     List<QueryResult> queryResults = sqlExecutor.query(pair.first, pair.second, connection);
-                    if ((Long) queryResults.get(0).getObject(0) > 0) {
+                    if (Long.parseLong(queryResults.get(0).getObject(0).toString()) > 0) {
                         result = true;
                     }
                 } catch (Exception e) {
@@ -392,7 +392,7 @@ public class DbormHandler implements Dborm {
                 PairDborm<String, List> pair = sqlPairFactory.getEntityCount(entityClass);
                 try {
                     List<QueryResult> queryResults = sqlExecutor.query(pair.first, pair.second, connection);
-                    count = (Long) queryResults.get(0).getObject(0);
+                    count = Long.parseLong(queryResults.get(0).getObject(0).toString());
                 } catch (Exception e) {
                     logger.error(e);
                 } finally {
@@ -416,7 +416,7 @@ public class DbormHandler implements Dborm {
             if (connection != null) {
                 try {
                     List<QueryResult> queryResults = sqlExecutor.query(sql, bindArgs, connection);
-                    count = (Long) queryResults.get(0).getObject(0);
+                    count = Long.parseLong(queryResults.get(0).getObject(0).toString());
                 } catch (Exception e) {
                     logger.error(e);
                 } finally {

@@ -54,7 +54,7 @@ public class EntityListTest extends BaseTest {
     }
 
     @Test
-    public void delete() {
+    public void testDelete() {
         List<UserInfo> userInfos = getUserInfos(10);
         boolean result = DbormManager.getDborm().delete(userInfos);
         assertEquals(true, result);
