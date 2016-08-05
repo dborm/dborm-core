@@ -42,6 +42,8 @@ public class SelectJoinTest extends BaseTest {
         BaseDomain baseDomain = DbormManager.getDborm().getEntity(BaseDomain.class, sql);
         assertEquals(BOOK_ID, baseDomain.getParam("id"));//可以将查询结果封装在BaseDomain中,然后通过属性名称获取
         assertEquals(USER_ID, baseDomain.getParam("userId"));//如列为user_id,取值的时候需要使用userId(自动将下划线格式转换为驼峰格式)
+        assertEquals(true, baseDomain.getParam("looked"));
+
     }
 
 
