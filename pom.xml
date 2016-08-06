@@ -6,9 +6,7 @@
     <artifactId>dborm-core</artifactId>
     <packaging>jar</packaging>
     <version>1.1.2-SNAPSHOT</version>
-
-
-    <name>dborm-core Maven Webapp</name>
+    <name>${project.artifactId}</name>
     <url>http://www.dborm.org</url>
 
     <dependencies>
@@ -44,7 +42,7 @@
 
 
     <build>
-        <finalName>dborm-core</finalName>
+        <finalName>${project.artifactId}</finalName>
 
         <plugins>
             <!-- 拷贝依赖的jar包到lib目录 -->

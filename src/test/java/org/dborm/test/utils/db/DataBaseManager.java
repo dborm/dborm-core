@@ -46,7 +46,7 @@ public class DataBaseManager extends DbormDataBase {
 //        String password = "dborm_test";
 
         String driver = "com.mysql.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8";
+        String url = "jdbc:mysql://127.0.0.1:3306/dborm-test?useUnicode=true&characterEncoding=utf8";
         String username = "root";
         String password = "";
 
