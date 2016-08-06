@@ -18,11 +18,11 @@ public abstract class DbormDataBase {
      */
     public static boolean showSql = true;
 
-    private DbormLogger logger = new DbormLoggerHandler();
+    protected DbormLogger logger = new DbormLoggerHandler();
 
-    private SQLExecutor sqlExecutor = new SQLExecutorHandler(logger);
+    protected SQLExecutor sqlExecutor = new SQLExecutorHandler(logger);
 
-    private DataConverter dataConverter = new DataConverterHandler();
+    protected DataConverter dataConverter = new DataConverterHandler();
 
     /**
      * 获得数据库连接
