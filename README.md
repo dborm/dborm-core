@@ -59,7 +59,8 @@ CREATE TABLE `qsm_option` (
 修改dborm-core/src/test/java/org/dborm/test/utils/db/DataBaseManager.java文件中的数据源为自己的数据源
 修改如下内容:
 
-```
+```java
+
  private Connection createConnection() {
     String driver = "com.mysql.jdbc.Driver";
     String url = "jdbc:mysql://127.0.0.1:3306/dborm-test?useUnicode=true&characterEncoding=utf8";
