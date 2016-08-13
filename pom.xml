@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dborm-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.3-SNAPSHOT</version>
+    <version>1.1.4-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <url>http://www.dborm.org</url>
 

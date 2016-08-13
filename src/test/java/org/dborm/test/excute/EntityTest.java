@@ -94,6 +94,12 @@ public class EntityTest extends BaseTest {
         assertEquals(null, user);
     }
 
+    @Test
+    public void testExecSql() {
+        boolean result = DbormManager.getDborm().execSql("delete from user_info where id = ?", USER_ID);
+        assertEquals(true, result);
+    }
+
     @After
     public void after() {
         cleanTable();

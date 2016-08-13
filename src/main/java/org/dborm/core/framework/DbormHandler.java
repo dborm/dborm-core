@@ -444,12 +444,12 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public boolean execSql(Object connection, String sql, Object... bindArgs) {
-        return execSql(connection, sql, toList(bindArgs));
+    public boolean execSqlWithConnection(Object connection, String sql, Object... bindArgs) {
+        return execSqlWithConnection(connection, sql, toList(bindArgs));
     }
 
     @Override
-    public boolean execSql(Object connection, String sql, List bindArgs) {
+    public boolean execSqlWithConnection(Object connection, String sql, List bindArgs) {
         boolean result = false;
         if (stringUtils.isNotBlank(sql)) {
             try {

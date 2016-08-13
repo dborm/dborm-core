@@ -50,6 +50,14 @@ public class SelectTest extends BaseTest {
     }
 
     @Test
+    public void testGetEntitiesWithArgs() {
+        String sql = "SELECT * FROM user_info where nickname = ?";
+        List<UserInfo> user = DbormManager.getDborm().getEntities(UserInfo.class, sql, USER_NICKNAME);
+        assertEquals(USER_NICKNAME, user.get(0).getNickname());
+    }
+
+
+    @Test
     public void testGetEntitiesByExample() {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(USER_ID);

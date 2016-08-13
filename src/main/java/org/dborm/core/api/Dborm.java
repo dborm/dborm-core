@@ -407,7 +407,7 @@ public interface Dborm {
      * @param bindArgs   sql语句所需的参数
      * @return true:执行成功 false:执行失败或空的参数
      */
-    boolean execSql(Object connection, String sql, Object... bindArgs);
+    boolean execSqlWithConnection(Object connection, String sql, Object... bindArgs);
 
     /**
      * 执行指定的SQL语句
@@ -417,7 +417,7 @@ public interface Dborm {
      * @param bindArgs   sql语句所需的参数
      * @return true:执行成功 false:执行失败或空的参数
      */
-    boolean execSql(Object connection, String sql, List bindArgs);
+    boolean execSqlWithConnection(Object connection, String sql, List bindArgs);
 
     /**
      * 按事务方式批量执行SQL
