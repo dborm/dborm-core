@@ -9,13 +9,13 @@ import org.dborm.core.domain.BaseDomain;
  * Created by shk
  * 16/4/15 下午3:58
  */
-@Table
+@Table("book_info")
 public class BookInfo extends BaseDomain {
 
     @Column(isPrimaryKey = true)
     private String id;
 
-    @Column
+    @Column("name")
     private String name;//书名
 
     @Column(isPrimaryKey = true)//一个表可以有多个主键字段,形成联合主键

@@ -14,6 +14,11 @@ public class ColumnBean {
     private String fieldName;
 
     /**
+     * 列名
+     */
+    private String columnName;
+
+    /**
      * 是否作为主键，支持联合主键
      */
     private boolean isPrimaryKey;
@@ -47,5 +52,11 @@ public class ColumnBean {
         this.defaultValue = defaultValue;
     }
 
+    public String getColumnName() {
+        return columnName;
+    }
 
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
 }

@@ -32,8 +32,8 @@ public class SQLTranslater {
         StringBuilder columnValue = new StringBuilder();
 
         Map<String, Field> fields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
-        for(String name: fields.keySet()){
-            columnNames.append(name);
+        for(String columnName: fields.keySet()){
+            columnNames.append(columnName);
             columnNames.append(", ");
             columnValue.append("?, ");
         }
@@ -81,8 +81,8 @@ public class SQLTranslater {
         StringBuilder columnNames = new StringBuilder();
 
         Map<String, Field> columnFields = Cache.getCache().getEntityColumnFieldsCache(entityClass);
-        for(String name : columnFields.keySet()){
-            columnNames.append(name);
+        for(String columnName : columnFields.keySet()){
+            columnNames.append(columnName);
             columnNames.append("=?, ");
         }
         sqlContent.append(stringUtils.cutLastSign(columnNames.toString(), ", "));
@@ -101,8 +101,8 @@ public class SQLTranslater {
     public String parsePrimaryKeyWhere(Class<?> entityClass) {
         StringBuilder sqlContent = new StringBuilder();
         Map<String, Field> fields = Cache.getCache().getEntityPrimaryKeyFieldsCache(entityClass);
-        for(String name : fields.keySet()){
-            sqlContent.append(name);
+        for(String columnName : fields.keySet()){
+            sqlContent.append(columnName);
             sqlContent.append("=? and ");
         }
         return stringUtils.cutLastSign(sqlContent.toString(), "and ");

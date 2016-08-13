@@ -15,15 +15,25 @@ import java.lang.annotation.Target;
 public @interface Column {
 
     /**
+     * 该属性对应的表中的列名
+     * 如果不填写，则将驼峰格式的属性名转换为下划线格式的名称作为列名（如属性名为createTime对应的列名为create_time）
+     * 如果填写则以填写的为准（如属性名为为createUserId对应的列名为create_by,则将该值设置为create_by即可）
+     *
+     * @author COCHO
+     * @time 2013-5-2下午4:08:21
+     */
+    String value() default "";
+
+    /**
      * 是否作为主键
      */
-    public boolean isPrimaryKey() default false;
+    boolean isPrimaryKey() default false;
 
     /**
      * 默认值(字符串"null"或者null相当于没有默认值)
      *
      * @author COCHO
      */
-    public String defaultValue() default "null";
+    String defaultValue() default "null";
 
 }

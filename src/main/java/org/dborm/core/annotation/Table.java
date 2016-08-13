@@ -17,11 +17,11 @@ public @interface Table {
     /**
      * 该类对应的表的名称
      * 如果不填写，则将驼峰格式的类名转换为下划线格式的名称作为表名（如类名为UserInfo对应的表名为user_info）
-     * 如果填写则以填写的为准（如类名为为User表名为user_info,则将该值设置为user_info即可）
+     * 如果填写则以填写的为准（如类名为为User对应的表名为user_info,则将该值设置为user_info即可）
      *
      * @author COCHO
      * @time 2013-5-2下午4:08:21
      */
-    public String tableName() default "";
+    String value() default "";
 
 }

@@ -1,5 +1,6 @@
 package org.dborm.core.framework;
 
+import org.dborm.core.annotation.Column;
 import org.dborm.core.domain.ColumnBean;
 import org.dborm.core.utils.ReflectUtilsDborm;
 import org.dborm.core.utils.StringUtilsDborm;
@@ -32,7 +33,15 @@ public class EntityParser {
         List<Field> fields = reflectUtils.getFields(entityClass);
         Map<String, Field> allFields = new HashMap<String, Field>();
         for (Field field : fields) {
-            allFields.put(stringUtils.humpToUnderlineName(field.getName()), field);
+            String columnName = stringUtils.humpToUnderlineName(field.getName());
+            Column columnAnnotation = field.getAnnotation(Column.class);
+            if (columnAnnotation != null) {
+                String value = columnAnnotation.value();
+                if (stringUtils.isNotEmpty(value)) {
+                    columnName = value;
+                }
+            }
+            allFields.put(columnName, field);
         }
         return allFields;
     }
@@ -78,7 +87,6 @@ public class EntityParser {
         }
         return primaryKeys;
     }
-
 
 
 }
