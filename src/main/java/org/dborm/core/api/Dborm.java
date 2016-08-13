@@ -248,7 +248,7 @@ public interface Dborm {
      * @author COCHO
      * @time 2013-5-6上午11:23:46
      */
-    <T> List<T> getEntities(Class<?> entityClass, Object connection, String sql, Object... bindArgs);
+    <T> List<T> getEntities(Object connection, Class<?> entityClass, String sql, Object... bindArgs);
 
     /**
      * 根据查询语句返回实体集合
@@ -261,7 +261,7 @@ public interface Dborm {
      * @author COCHO
      * @time 2013-5-6上午11:23:46
      */
-    <T> List<T> getEntities(Class<?> entityClass, Object connection, String sql, List bindArgs);
+    <T> List<T> getEntities(Object connection, Class<?> entityClass, String sql, List bindArgs);
 
     /**
      * 组合查询（连接的多个表中有相同字段的时候不建议使用该方式）

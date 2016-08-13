@@ -212,7 +212,7 @@ public class DbormHandler implements Dborm {
     public <T> T getEntity(Object connection, Class<?> entityClass, String sql, List bindArgs) {
         if (stringUtils.isNotBlank(sql) && entityClass != null && connection != null) {
             try {
-                List<T> entityList = getEntities(entityClass, connection, sql, bindArgs);
+                List<T> entityList = getEntities(connection, entityClass, sql, bindArgs);
                 if (entityList != null && entityList.size() > 0) {
                     return entityList.get(0);
                 }
@@ -234,7 +234,7 @@ public class DbormHandler implements Dborm {
         Object connection = getConnection();
         if (connection != null) {
             try {
-                results = getEntities(entityClass, connection, sql, bindArgs);
+                results = getEntities(connection, entityClass, sql, bindArgs);
             } catch (Exception e) {
                 logger.error(e);
             } finally {
@@ -245,12 +245,12 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> List<T> getEntities(Class<?> entityClass, Object connection, String sql, Object... bindArgs) {
-        return getEntities(entityClass, connection, sql, toList(bindArgs));
+    public <T> List<T> getEntities(Object connection, Class<?> entityClass, String sql, Object... bindArgs) {
+        return getEntities(connection, entityClass, sql, toList(bindArgs));
     }
 
     @Override
-    public <T> List<T> getEntities(Class<?> entityClass, Object connection, String sql, List bindArgs) {
+    public <T> List<T> getEntities(Object connection, Class<?> entityClass, String sql, List bindArgs) {
         List<T> results = new ArrayList<T>();
         if (stringUtils.isNotBlank(sql) && entityClass != null && connection != null) {
             try {
@@ -336,7 +336,7 @@ public class DbormHandler implements Dborm {
         if (connection != null) {
             try {
                 PairDborm<String, List> pair = sqlPairFactory.getEntitiesByExample(example, isAnd);
-                results = getEntities(example.getClass(), connection, pair.first, pair.second);
+                results = getEntities(connection, example.getClass(), pair.first, pair.second);
             } catch (Exception e) {
                 logger.error(e);
             } finally {
