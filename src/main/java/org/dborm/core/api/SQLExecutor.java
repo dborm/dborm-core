@@ -25,7 +25,7 @@ public interface SQLExecutor {
      * @author COCHO
      * @time 2013-6-7下午2:54:48
      */
-    void execSQL(String sql, List bindArgs, Object connection) throws Exception;
+    int execSQL(String sql, List bindArgs, Object connection) throws Exception;
 
     /**
      * 批量执行SQL，在事务中完成
@@ -35,7 +35,7 @@ public interface SQLExecutor {
      * @author COCHO
      * @time 2013-5-6上午10:41:26
      */
-    void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Object connection) throws Exception;
+    int execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Object connection) throws Exception;
 
     /**
      * 查询操作

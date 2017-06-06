@@ -39,9 +39,9 @@ public interface Dborm {
      * 将事务设置为默认的自动提交
      * 清空事务缓冲区中的SQL
      *
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    boolean commit();
+    int commit();
 
 
     /**
@@ -49,9 +49,9 @@ public interface Dborm {
      * 主键值不能为空
      *
      * @param entity 实体对象
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean insert(T entity);
+    <T> int insert(T entity);
 
 
     /**
@@ -60,9 +60,9 @@ public interface Dborm {
      * 自动添加事务
      *
      * @param entitys 实体对象集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean insert(Collection<T> entitys);
+    <T> int insert(Collection<T> entitys);
 
     /**
      * 替换实体（修改所有的列）
@@ -73,9 +73,9 @@ public interface Dborm {
      * 自动添加事务
      *
      * @param entity 实体对象
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean replace(T entity);
+    <T> int replace(T entity);
 
     /**
      * 批量替换实体（修改所有的列）
@@ -86,9 +86,9 @@ public interface Dborm {
      * 自动添加事务
      *
      * @param entitys 实体对象集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean replace(Collection<T> entitys);
+    <T> int replace(Collection<T> entitys);
 
     /**
      * 修改实体（仅修改属性值不为null的列）
@@ -98,9 +98,9 @@ public interface Dborm {
      * 属性值为null,则忽略修改该列（修改后仍保持原来的值）
      *
      * @param entity 实体对象
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean update(T entity);
+    <T> int update(T entity);
 
     /**
      * 批量修改实体（仅修改属性值不为null的列）
@@ -111,9 +111,9 @@ public interface Dborm {
      * 自动添加事务
      *
      * @param entitys 实体对象集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean update(Collection<T> entitys);
+    <T> int update(Collection<T> entitys);
 
     /**
      * 新增或修改（根据主键查找数据库是否有该记录，有则修改，没有则新增，自动添加事务）
@@ -123,7 +123,7 @@ public interface Dborm {
      * @param entity 实体类
      * @return true:执行成功 false:执行失败或空的参数或空的实体
      */
-    <T> boolean saveOrUpdate(T entity);
+    <T> int saveOrUpdate(T entity);
 
     /**
      * 批量新增或修改（根据主键查找数据库是否有该记录，有则修改，没有则新增，自动添加事务）
@@ -131,9 +131,9 @@ public interface Dborm {
      * 如:两个相同主键的UserInfo对象,将会做相同的修改或新增操作,而不会出现第一个UserInfo做新增,第二个UserInfo做修改的情况（因为操作完成之前数据库中还不存在该记录）
      *
      * @param entitys 实体类集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean saveOrUpdate(Collection<T> entitys);
+    <T> int saveOrUpdate(Collection<T> entitys);
 
     /**
      * 新增或替换（根据主键查找数据库是否有该记录，有则替换，没有则新增，自动添加事务）
@@ -141,9 +141,9 @@ public interface Dborm {
      * 如:两个相同主键的UserInfo对象,将会做相同的修改或新增操作,而不会出现第一个UserInfo做新增,第二个UserInfo做修改的情况（因为操作完成之前数据库中还不存在该记录）
      *
      * @param entity 实体类
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean saveOrReplace(T entity);
+    <T> int saveOrReplace(T entity);
 
     /**
      * 批量新增或替换（根据主键查找数据库是否有该记录，有则替换，没有则新增，自动添加事务）
@@ -151,25 +151,25 @@ public interface Dborm {
      * 如:两个相同主键的UserInfo对象,将会做相同的修改或新增操作,而不会出现第一个UserInfo做新增,第二个UserInfo做修改的情况（因为操作完成之前数据库中还不存在该记录）
      *
      * @param entitys 实体类集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean saveOrReplace(Collection<T> entitys);
+    <T> int saveOrReplace(Collection<T> entitys);
 
     /**
      * 删除实体(主键值不能为空，自动添加事务)
      *
      * @param entity 实体对象
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean delete(T entity);
+    <T> int delete(T entity);
 
     /**
      * 批量删除实体(主键值不能为空，自动添加事务)
      *
      * @param entitys 实体对象集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 返回影响到的行数
      */
-    <T> boolean delete(Collection<T> entitys);
+    <T> int delete(Collection<T> entitys);
 
     /**
      * 根据查询语句返回实体(如果查询出多个实体时仅返回第一个)
@@ -382,22 +382,22 @@ public interface Dborm {
      *
      * @param sql      SQL语句
      * @param bindArgs SQL语句所需的参数（该参数允许为null）
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 影响的行数
      * @author COCHO
      * @time 2013-5-6下午4:23:11
      */
-    boolean execSql(String sql, Object... bindArgs);
+    int execSql(String sql, Object... bindArgs);
 
     /**
      * 执行SQL
      *
      * @param sql      SQL语句
      * @param bindArgs SQL语句所需的参数（该参数允许为null）
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 影响的行数
      * @author COCHO
      * @time 2013-5-6下午4:23:11
      */
-    boolean execSql(String sql, List bindArgs);
+    int execSql(String sql, List bindArgs);
 
     /**
      * 执行指定的SQL语句
@@ -405,9 +405,9 @@ public interface Dborm {
      * @param connection 数据库连接
      * @param sql        sql语句
      * @param bindArgs   sql语句所需的参数
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 影响的行数
      */
-    boolean execSqlWithConnection(Object connection, String sql, Object... bindArgs);
+    int execSqlWithConnection(Object connection, String sql, Object... bindArgs);
 
     /**
      * 执行指定的SQL语句
@@ -415,19 +415,20 @@ public interface Dborm {
      * @param connection 数据库连接
      * @param sql        sql语句
      * @param bindArgs   sql语句所需的参数
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 影响的行数
      */
-    boolean execSqlWithConnection(Object connection, String sql, List bindArgs);
+    int execSqlWithConnection(Object connection, String sql, List bindArgs);
+
 
     /**
      * 按事务方式批量执行SQL
      *
      * @param execSqlPairList sql语句集合
-     * @return true:执行成功 false:执行失败或空的参数
+     * @return 影响的行数
      * @author COCHO
      * @time 2013-6-7下午3:08:45
      */
-    boolean execSql(Collection<PairDborm<String, List>> execSqlPairList);
+    int execSql(Collection<PairDborm<String, List>> execSqlPairList);
 
     /**
      * 获得数据库连接
@@ -438,16 +439,17 @@ public interface Dborm {
 
     /**
      * 获取数据库操作类
+     *
      * @return
      */
     DbormDataBase getDataBase();
 
     /**
      * 设置数据库操作类
+     *
      * @param dataBase
      */
     void setDataBase(DbormDataBase dataBase);
-
 
 
 }

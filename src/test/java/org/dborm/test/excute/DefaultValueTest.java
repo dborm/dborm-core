@@ -24,8 +24,8 @@ public class DefaultValueTest extends BaseTest {
         UserInfo user = new UserInfo();
         user.setId(USER_ID);
         user.setName("Jack");
-        boolean result = DbormManager.getDborm().insert(user);
-        assertEquals(true, result);
+        int result = DbormManager.getDborm().insert(user);
+        assertEquals(1, result);
         user = DbormManager.getDborm().getEntityByExample(user);
         if (user.getAge() == 18) {
             assertEquals(true, true);//因为age属性的column注解指定了默认值,所以新增的时候没有设置age的值时会使用默认值

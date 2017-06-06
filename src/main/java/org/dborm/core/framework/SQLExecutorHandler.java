@@ -25,7 +25,7 @@ public class SQLExecutorHandler implements SQLExecutor {
     }
 
     @Override
-    public void execSQL(String sql, List bindArgs, Object connection) throws Exception {
+    public int execSQL(String sql, List bindArgs, Object connection) throws Exception {
         PreparedStatement pst = null;
         try {
             Connection conn = (Connection) connection;
@@ -36,7 +36,7 @@ public class SQLExecutorHandler implements SQLExecutor {
                 }
             }
             showSql(getSql(sql, bindArgs));
-            pst.executeUpdate();
+            return pst.executeUpdate();
         } finally {
             if (pst != null) {
                 pst.close();
@@ -45,7 +45,8 @@ public class SQLExecutorHandler implements SQLExecutor {
     }
 
     @Override
-    public void execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Object connection) throws Exception {
+    public int execSQLUseTransaction(Collection<PairDborm<String, List>> execSqlPairList, Object connection) throws Exception {
+        int result = 0;//影响的行数
         PreparedStatement pst = null;
         String currentSql = "";
         Connection conn = (Connection) connection;
@@ -62,10 +63,11 @@ public class SQLExecutorHandler implements SQLExecutor {
                         pst.setObject(x + 1, pair.second.get(x));
                     }
                 }
-                pst.executeUpdate();
+                result += pst.executeUpdate();
             }
-            logger.debug(sqlBuffer.toString());
+            showSql(sqlBuffer.toString());
             conn.commit();
+            return result;
         } catch (Exception e) {
             conn.rollback();
             throw new Exception("出异常的SQL如下:\n" + currentSql, e);

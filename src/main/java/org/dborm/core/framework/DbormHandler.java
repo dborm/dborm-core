@@ -37,21 +37,21 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public boolean commit() {
-        boolean result = execute(transactionSqlCache);
+    public int commit() {
+        int result = execute(transactionSqlCache);
         autoCommit = true;
         transactionSqlCache.clear();
         return result;
     }
 
     @Override
-    public <T> boolean insert(T entity) {
+    public <T> int insert(T entity) {
         return insert(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean insert(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int insert(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
             for (T entity : entitys) {
@@ -63,13 +63,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> boolean replace(T entity) {
+    public <T> int replace(T entity) {
         return replace(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean replace(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int replace(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
             for (T entity : entitys) {
@@ -81,13 +81,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> boolean update(T entity) {
+    public <T> int update(T entity) {
         return update(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean update(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int update(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
             for (T entity : entitys) {
@@ -99,13 +99,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> boolean saveOrUpdate(T entity) {
+    public <T> int saveOrUpdate(T entity) {
         return saveOrUpdate(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean saveOrUpdate(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int saveOrUpdate(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             Object connection = getConnection();
             if (connection != null) {
@@ -116,8 +116,7 @@ public class DbormHandler implements Dborm {
                     }
 
                     if (autoCommit) {
-                        sqlExecutor.execSQLUseTransaction(pairList, connection);
-                        result = true;
+                        result = sqlExecutor.execSQLUseTransaction(pairList, connection);
                     } else {
                         transactionSqlCache.addAll(pairList);
                     }
@@ -132,13 +131,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> boolean saveOrReplace(T entity) {
+    public <T> int saveOrReplace(T entity) {
         return saveOrReplace(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean saveOrReplace(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int saveOrReplace(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             Object connection = getConnection();
             if (connection != null) {
@@ -149,8 +148,7 @@ public class DbormHandler implements Dborm {
                     }
 
                     if (autoCommit) {
-                        sqlExecutor.execSQLUseTransaction(pairList, connection);
-                        result = true;
+                        result = sqlExecutor.execSQLUseTransaction(pairList, connection);
                     } else {
                         transactionSqlCache.addAll(pairList);
                     }
@@ -165,13 +163,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public <T> boolean delete(T entity) {
+    public <T> int delete(T entity) {
         return delete(toEntityCollection(entity));
     }
 
     @Override
-    public <T> boolean delete(Collection<T> entitys) {
-        boolean result = false;
+    public <T> int delete(Collection<T> entitys) {
+        int result = 0;
         if (entitys != null && entitys.size() > 0) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
             for (T entity : entitys) {
@@ -428,13 +426,13 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public boolean execSql(String sql, Object... bindArgs) {
+    public int execSql(String sql, Object... bindArgs) {
         return execSql(sql, toList(bindArgs));
     }
 
     @Override
-    public boolean execSql(String sql, List bindArgs) {
-        boolean result = false;
+    public int execSql(String sql, List bindArgs) {
+        int result = 0;
         if (stringUtils.isNotBlank(sql)) {
             List<PairDborm<String, List>> pairList = new ArrayList<PairDborm<String, List>>();
             pairList.add(PairDborm.create(sql, bindArgs));
@@ -444,28 +442,26 @@ public class DbormHandler implements Dborm {
     }
 
     @Override
-    public boolean execSqlWithConnection(Object connection, String sql, Object... bindArgs) {
+    public int execSqlWithConnection(Object connection, String sql, Object... bindArgs) {
         return execSqlWithConnection(connection, sql, toList(bindArgs));
     }
 
     @Override
-    public boolean execSqlWithConnection(Object connection, String sql, List bindArgs) {
-        boolean result = false;
+    public int execSqlWithConnection(Object connection, String sql, List bindArgs) {
+        int result = 0;
         if (stringUtils.isNotBlank(sql)) {
             try {
-                sqlExecutor.execSQL(sql, bindArgs, connection);
-                result = true;
+                result = sqlExecutor.execSQL(sql, bindArgs, connection);
             } catch (Exception e) {
                 logger.error(e);
-                result = false;
             }
         }
         return result;
     }
 
     @Override
-    public boolean execSql(Collection<PairDborm<String, List>> execSqlPairList) {
-        boolean result = false;
+    public int execSql(Collection<PairDborm<String, List>> execSqlPairList) {
+        int result = 0;
         if (execSqlPairList != null && execSqlPairList.size() > 0) {
             result = execSqlByTransaction(execSqlPairList);
         }
@@ -492,8 +488,8 @@ public class DbormHandler implements Dborm {
     }
 
 
-    private boolean execSqlByTransaction(Collection<PairDborm<String, List>> pairList) {
-        boolean result = false;
+    private int execSqlByTransaction(Collection<PairDborm<String, List>> pairList) {
+        int result = 0;
         if (autoCommit) {
             result = execute(pairList);
         } else {
@@ -502,14 +498,13 @@ public class DbormHandler implements Dborm {
         return result;
     }
 
-    private boolean execute(Collection<PairDborm<String, List>> execSqlPairList) {
-        boolean result = false;
+    private int execute(Collection<PairDborm<String, List>> execSqlPairList) {
+        int result = 0;
         if (execSqlPairList != null && execSqlPairList.size() > 0) {
             Object connection = getConnection();
             if (connection != null) {
                 try {
-                    sqlExecutor.execSQLUseTransaction(execSqlPairList, connection);
-                    result = true;
+                    result = sqlExecutor.execSQLUseTransaction(execSqlPairList, connection);
                 } catch (Exception e) {
                     logger.error(e);
                 } finally {

@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class BaseDomain {
 
-    private Map<String, Object> params = new HashMap<String, Object>();
+    Map<String, Object> params = new HashMap<String, Object>();
 
     public void putParam(String key, Object obj) {
         params.put(key, obj);
@@ -26,8 +26,6 @@ public class BaseDomain {
     public void setParams(Map<String, Object> params) {
         this.params = params;
     }
-
-
 
 
 }

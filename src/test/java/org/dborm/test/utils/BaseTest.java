@@ -52,10 +52,8 @@ public class BaseTest {
 
 
     public static void cleanTable() {
-        boolean result = DbormManager.getDborm().execSql("delete from user_info");
-        assertEquals(true, result);
-        result = DbormManager.getDborm().execSql("delete from book_info");
-        assertEquals(true, result);
+        DbormManager.getDborm().execSql("delete from user_info");
+        DbormManager.getDborm().execSql("delete from book_info");
     }
 
 

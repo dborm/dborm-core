@@ -21,8 +21,8 @@ public class RelationListTest extends BaseTest {
 
     @Before
     public void before() {
-        boolean result = DbormManager.getDborm().insert(getRelationUserInfos());
-        assertEquals(true, result);
+        int result = DbormManager.getDborm().insert(getRelationUserInfos());
+        assertEquals(1, result);
     }
 
     @Test
